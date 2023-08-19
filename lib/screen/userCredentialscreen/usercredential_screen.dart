@@ -10,8 +10,9 @@ class UserCredentialScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/login_background.png'),
-              fit: BoxFit.cover),
+            image: AssetImage('assets/login_background.png'),
+            fit: BoxFit.cover,
+          ),
         ),
         child: const UserCredentialView(),
       ),
