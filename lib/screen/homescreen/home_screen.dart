@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  String _appBarTitle = 'Home';
+  final List<String> _appBarTitles = ['Profile', 'Scanner', 'New Meeting'];
 
   final List<Widget> _screens = [
     const ProfileScreen(),
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Center(
           child: Text(
-            _appBarTitle,
+            _appBarTitles[_currentIndex],
             style: const TextStyle(
               color: Colors.cyan,
             ),
@@ -55,16 +55,17 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      body: Navigator(
-        initialRoute: '/',
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute(
-            builder: (BuildContext context) {
-              return _screens[_currentIndex];
-            },
-          );
-        },
-      ),
+      // body: Navigator(
+      //   initialRoute: '/',
+      //   onGenerateRoute: (RouteSettings settings) {
+      //     return MaterialPageRoute(
+      //       builder: (BuildContext context) {
+      //         return _screens[_currentIndex];
+      //       },
+      //     );
+      //   },
+      // ),
+      body: Center(child: _screens[_currentIndex]),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
             border: Border(
@@ -94,17 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: (index) {
             setState(() {
               _currentIndex = index;
-              switch (_currentIndex) {
-                case 0:
-                  _appBarTitle = 'Profile';
-                  break;
-                case 1:
-                  _appBarTitle = 'Scanner';
-                  break;
-                case 2:
-                  _appBarTitle = 'New Meeting';
-                  break;
-              }
             });
           },
         ),
