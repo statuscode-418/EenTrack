@@ -1,4 +1,5 @@
 import 'package:eentrack/models/user_model.dart';
+import 'package:eentrack/screen/homescreen/edit_profile_screen.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +16,7 @@ class HomeScreen extends StatefulWidget {
   final DBModel dbprovider;
   final String? error;
   final bool isLoading;
-  const HomeScreen({
+  HomeScreen({
     Key? key,
     this.isLoading = false,
     this.error,
@@ -81,17 +82,39 @@ class _HomeScreenState extends State<HomeScreen> {
           'assets/logo.png',
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              showAlartDialog('Logout', 'You sure want to logout?', context)
-                  .then((value) {
-                if (value == Option.ok) {
-                  BlocProvider.of<AuthBloc>(context).add(AuthEventLogout());
-                }
-              });
-            }, //_onLogout(context),
-            icon: const Icon(Icons.logout),
-          )
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem(
+                  value: 'logout',
+                  child: ListTile(
+                    leading: Icon(Icons.logout),
+                    title: Text('Logout'),
+                  ),
+                ),
+                const PopupMenuItem(
+                    value: 'edit',
+                    child: ListTile(
+                      leading: Icon(Icons.edit),
+                      title: Text('Edit Profile'),
+                    )),
+              ];
+            },
+            onSelected: (value) {
+              if (value == 'logout') {
+                showAlartDialog('Logout', 'You sure want to logout?', context)
+                    .then((value) {
+                  if (value == Option.ok) {
+                    BlocProvider.of<AuthBloc>(context).add(AuthEventLogout());
+                  }
+                });
+              } else if (value == 'edit') {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        EditProfileScreen(user: widget.user)));
+              }
+            },
+          ),
         ],
       ),
       body: Center(
