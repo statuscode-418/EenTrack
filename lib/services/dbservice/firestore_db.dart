@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eentrack/models/attendee_model.dart';
 import 'package:eentrack/models/model_consts.dart' as model_consts;
+import 'package:geolocator/geolocator.dart';
 
 import '../../models/meeting_model.dart';
 import '../../models/user_model.dart';
 import 'db_exception.dart';
 import 'db_model.dart';
 import 'db_consts.dart' as db_consts;
+import '../locationservices/location_services.dart';
 
 class FirestoreDB implements DBModel {
   late final FirebaseFirestore _db;
@@ -83,16 +85,29 @@ class FirestoreDB implements DBModel {
   @override
   Future<Meeting> createMeeting(String uid, Meeting meeting) async {
     try {
+      Position position = await getCurrentLocation();
+      Meeting newMeeting = Meeting(
+        id: meeting.id,
+        hostid: meeting.hostid,
+        isHost: meeting.isHost,
+        coHosts: meeting.coHosts,
+        title: meeting.title,
+        description: meeting.description,
+        date: meeting.date,
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+
       await _db
           .collection(db_consts.meetings)
-          .doc(meeting.id)
-          .set(meeting.toMap());
+          .doc(newMeeting.id)
+          .set(newMeeting.toMap());
+      return newMeeting;
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');
     } on Exception catch (e) {
       throw DBException(e.toString());
     }
-    return meeting;
   }
 
   @override
@@ -181,6 +196,25 @@ class FirestoreDB implements DBModel {
   @override
   Future<void> addAttendee(String uid, String mid, Attendee attendee) async {
     try {
+      // Position currentPosition = await getCurrentLocation();
+
+      // Meeting? meeting = await getMeeting(uid, mid);
+
+      // if (meeting == null) {
+      //   throw DBException('Meeing not found');
+      // }
+
+      // double distance = Geolocator.distanceBetween(
+      //   currentPosition.latitude,
+      //   currentPosition.longitude,
+      //   meeting.latitude,
+      //   meeting.longitude,
+      // );
+
+      // if (distance > 50) {
+      //   throw DBException('Host is far away from the meeting');
+      // }
+
       await _db
           .collection(db_consts.meetings)
           .doc(mid)
