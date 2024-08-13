@@ -3,7 +3,6 @@ import 'package:eentrack/services/dbservice/db_exception.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
 import '../../firebase_options.dart';
 import '../../services/authservices/auth_exception.dart';
@@ -23,8 +22,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         await authProvider.init();
         await dbprovider.init();
-
-        await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
 
         final authuser = authProvider.user;
         if (authuser == null) {
