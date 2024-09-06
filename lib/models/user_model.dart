@@ -25,14 +25,16 @@ class User implements DataModel {
     required this.github,
   });
 
-  User.newUser({required this.uid, required this.email,})
-  : name = '',
-    roll = '',
-    semester = '',
-    department = '',
-    photoUrl = '',
-    linkedin = '',
-    github = '';
+  User.newUser({
+    required this.uid,
+    required this.email,
+  })  : name = '',
+        roll = '',
+        semester = '',
+        department = '',
+        photoUrl = '',
+        linkedin = '',
+        github = '';
 
   User copyWith({
     String? uid,

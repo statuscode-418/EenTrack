@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:eentrack/models/attendee_model.dart';
 import 'package:eentrack/models/meeting_model.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/attendee_sliver_list.dart';
@@ -62,20 +64,20 @@ class _ScanningScreenState extends State<ScanningScreen> {
   }
 
   void _addAttendee(Attendee attendee) async {
-    // Position currentPosition = await Geolocator.getCurrentPosition(
-    //     desiredAccuracy: LocationAccuracy.high);
-    // double distance = Geolocator.distanceBetween(
-    //   widget.meeting.latitude,
-    //   widget.meeting.longitude,
-    //   currentPosition.latitude,
-    //   currentPosition.longitude,
-    // );
+    Position currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    double distance = Geolocator.distanceBetween(
+      widget.meeting.latitude,
+      widget.meeting.longitude,
+      currentPosition.latitude,
+      currentPosition.longitude,
+    );
 
-    // if (distance > 50) {
-    //   showSnackbar(context, 'You are too far from the meeting location to scan',
-    //       type: SnackbarType.error);
-    //   return;
-    // }
+    if (distance > 50) {
+      showSnackbar(context, 'You are too far from the meeting location to scan',
+          type: SnackbarType.error);
+      return;
+    }
 
     var index = attendees.indexWhere((element) => element.uid == attendee.uid);
     if (index == -1) {
