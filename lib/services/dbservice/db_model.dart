@@ -1,4 +1,5 @@
 import 'package:eentrack/models/attendee_model.dart';
+import 'package:eentrack/models/participant_model.dart';
 
 import '../../models/meeting_model.dart';
 import '../../models/user_model.dart';
@@ -29,4 +30,13 @@ abstract class DBModel {
   Stream<List<Attendee>> getLeftAttendees(String uid, String mid);
   Future<List<Attendee>> getAttendeesList(String uid, String mid);
   Future<bool> isAttendee(String uid, String mid, String aid);
+
+  // Participants
+  Future<void> addParticipant(ParticipantModel participant);
+  Future<void> updateParticipant(ParticipantModel participant);
+  Future<void> removeParticipant(ParticipantModel participant);
+  Stream<List<ParticipantModel>> getParticipants(String mid);
+  Future<void> markCheckPoint(String mid, String uid, String checkPointId);
+  Future<void> unmarkCheckPoint(String mid, String uid, String checkPointId);
+
 }

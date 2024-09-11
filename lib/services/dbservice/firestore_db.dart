@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eentrack/models/attendee_model.dart';
 import 'package:eentrack/models/model_consts.dart' as model_consts;
+import 'package:eentrack/models/participant_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../../models/meeting_model.dart';
@@ -360,6 +361,96 @@ class FirestoreDB implements DBModel {
       throw DBException(e.message ?? 'Unknown error');
     } on Exception catch (e) {
       throw DBException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> addParticipant(ParticipantModel participant) async {
+    try {
+      await _db
+          .collection(db_consts.meetings)
+          .doc(participant.eventId)
+          .collection(db_consts.participant)
+          .doc(participant.userId)
+          .set(participant.toMap());
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Stream<List<ParticipantModel>> getParticipants(String mid) {
+    try {
+      return _db
+          .collection(db_consts.meetings)
+          .doc(mid)
+          .collection(db_consts.participant)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.docs
+            .map((doc) => ParticipantModel.fromMap(doc.data()))
+            .toList();
+      });
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<void> removeParticipant(ParticipantModel participant) {
+    try {
+      return _db
+          .collection(db_consts.meetings)
+          .doc(participant.eventId)
+          .collection(db_consts.participant)
+          .doc(participant.userId)
+          .delete();
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<void> updateParticipant(ParticipantModel participant) {
+    try {
+      return _db
+          .collection(db_consts.meetings)
+          .doc(participant.eventId)
+          .collection(db_consts.participant)
+          .doc(participant.userId)
+          .update(participant.toMap());
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<void> markCheckPoint(
+      String mid, String uid, String checkPointId) async {
+    try {
+      await _db
+          .collection(db_consts.meetings)
+          .doc(mid)
+          .collection(db_consts.participant)
+          .doc(uid)
+          .update({checkPointId: true});
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<void> unmarkCheckPoint(
+      String mid, String uid, String checkPointId) async {
+    try {
+      await _db
+          .collection(db_consts.meetings)
+          .doc(mid)
+          .collection(db_consts.participant)
+          .doc(uid)
+          .update({checkPointId: FieldValue.delete()});
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
     }
   }
 }
