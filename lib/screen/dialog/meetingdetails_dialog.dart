@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:eentrack/models/meeting_model.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 Future<Meeting?> showMeetingFormDialog(BuildContext context, String uid) async {
   String title = '';
   String description = '';
+  File? selectedFile;
+
   return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -38,6 +43,19 @@ Future<Meeting?> showMeetingFormDialog(BuildContext context, String uid) async {
                 onChanged: (des) {
                   description = des;
                 },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['xlsx', 'xls'],
+                  );
+                },
+                child: const Text('Upload Excel File'),
               ),
             ],
           ),

@@ -29,4 +29,13 @@ abstract class DBModel {
   Stream<List<Attendee>> getLeftAttendees(String uid, String mid);
   Future<List<Attendee>> getAttendeesList(String uid, String mid);
   Future<bool> isAttendee(String uid, String mid, String aid);
+
+  Future<void> saveAttendeeData(
+      String meetingId,
+      String uuid,
+      String name,
+      String dietaryPreference,
+      String whatsappNumber,
+      String university,
+      String paperNumber);
 }

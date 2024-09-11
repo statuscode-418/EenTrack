@@ -328,4 +328,31 @@ class FirestoreDB implements DBModel {
       throw DBException(e.toString());
     }
   }
+
+  @override
+  Future<void> saveAttendeeData(
+      String meetingId,
+      String uuid,
+      String name,
+      String dietaryPreference,
+      String whatsappNumber,
+      String university,
+      String paperNumber) async {
+    try {
+      CollectionReference attendeesRef =
+          _db.collection('meetings').doc(meetingId).collection('attendees');
+
+      await attendeesRef.doc(uuid).set({
+        'uuid': uuid,
+        'name': name,
+        'dietaryPreference': dietaryPreference,
+        'whatsappNumber': whatsappNumber,
+        'university': university,
+        'paperNumber': paperNumber,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to save attendee data: $e');
+    }
+  }
 }
