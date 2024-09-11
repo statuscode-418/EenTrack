@@ -1,12 +1,14 @@
 class ParticipantModel {
   final String eventId;
   final String userId;
+  final String name;
 
   final Map<String, dynamic> data;
 
   ParticipantModel({
     required this.eventId,
     required this.userId,
+    required this.name,
     required this.data,
   });
 
@@ -14,20 +16,27 @@ class ParticipantModel {
     return {
       'eventId': eventId,
       'userId': userId,
-      ...data,
+      'name': name,
+      ...data
+        ..remove('name')
+        ..remove('eventId')
+        ..remove('userId'),
     };
   }
 
   factory ParticipantModel.fromMap(Map<String, dynamic> map) {
     final eventId = map['eventId'];
     final userId = map['userId'];
+    final name = map['name'];
     final data = map
+      ..remove('name')
       ..remove('eventId')
       ..remove('userId');
 
     return ParticipantModel(
       eventId: eventId,
       userId: userId,
+      name: name,
       data: data,
     );
   }

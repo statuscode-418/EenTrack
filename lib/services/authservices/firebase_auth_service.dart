@@ -7,7 +7,6 @@ import 'authuser.dart';
 class FirebaseAuthService implements AuthModel {
   late final FirebaseAuth _auth;
 
-  // Makes it singletion DONT TOUCH IT
   static FirebaseAuthService get instance => _instance;
   FirebaseAuthService._();
   static final _instance = FirebaseAuthService._();
@@ -99,8 +98,6 @@ class FirebaseAuthService implements AuthModel {
   }
 
   AuthException _getAuthException(FirebaseAuthException e) {
-    // ignore: avoid_print
-    print(e.code);
     switch (e.code) {
       case 'invalid-email':
         return AuthException('Invalid email address');
