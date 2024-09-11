@@ -4,6 +4,7 @@ class ParticipantModel {
   final String name;
 
   final Map<String, dynamic> data;
+  final List<String> checkPoints = [];
 
   ParticipantModel({
     required this.eventId,
@@ -13,9 +14,16 @@ class ParticipantModel {
   });
 
   Map<String, dynamic> toMap() {
+    for (var checkpoint in checkPoints) {
+      if (data.containsKey(checkpoint)) {
+        data[checkpoint] = data[checkpoint].toIso8601String();
+      }
+    }
+
     return {
       'eventId': eventId,
       'userId': userId,
+      'checkPoints': checkPoints,
       'name': name,
       ...data
         ..remove('name')
@@ -28,10 +36,19 @@ class ParticipantModel {
     final eventId = map['eventId'];
     final userId = map['userId'];
     final name = map['name'];
-    final data = map
-      ..remove('name')
+    final checkPoints = List<String>.from(map['checkPoints']);
+    var data = map
       ..remove('eventId')
-      ..remove('userId');
+      ..remove('userId')
+      ..remove('name')
+      ..remove('checkPoints');
+
+    data = data.map((key, value) {
+      if (checkPoints.contains(key)) {
+        return MapEntry(key, DateTime.parse(value));
+      }
+      return MapEntry(key, value);
+    });
 
     return ParticipantModel(
       eventId: eventId,
@@ -46,10 +63,14 @@ class ParticipantModel {
   void remove(String key) => data.remove(key);
 
   void markCheckPoint(String checkPointId) {
-    data[checkPointId] = true;
+    if (!checkPoints.contains(checkPointId)) {
+      checkPoints.add(checkPointId);
+    }
+    data[checkPointId] = DateTime.now();
   }
 
   void unmarkCheckPoint(String checkPointId) {
+    checkPoints.remove(checkPointId);
     data.remove(checkPointId);
   }
 
