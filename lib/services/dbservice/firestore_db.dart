@@ -2,14 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eentrack/models/attendee_model.dart';
 import 'package:eentrack/models/model_consts.dart' as model_consts;
 import 'package:eentrack/models/participant_model.dart';
-import 'package:geolocator/geolocator.dart';
 
 import '../../models/meeting_model.dart';
 import '../../models/user_model.dart';
 import 'db_exception.dart';
 import 'db_model.dart';
 import 'db_consts.dart' as db_consts;
-import '../locationservices/location_services.dart';
 
 class FirestoreDB implements DBModel {
   late final FirebaseFirestore _db;
@@ -86,7 +84,6 @@ class FirestoreDB implements DBModel {
   @override
   Future<Meeting> createMeeting(String uid, Meeting meeting) async {
     try {
-      Position position = await getCurrentLocation();
       Meeting newMeeting = Meeting(
         id: meeting.id,
         hostid: meeting.hostid,
@@ -95,8 +92,6 @@ class FirestoreDB implements DBModel {
         title: meeting.title,
         description: meeting.description,
         date: meeting.date,
-        latitude: position.latitude,
-        longitude: position.longitude,
       );
 
       await _db
