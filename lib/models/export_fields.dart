@@ -10,9 +10,6 @@ enum ExportField {
   addedOn,
   leftOn,
   attendedFullMeeting,
-  latitude,
-  longitude,
-  areLocationsSame,
 }
 
 extension ExportFieldExtension on ExportField {
@@ -40,12 +37,6 @@ extension ExportFieldExtension on ExportField {
         return 'Left On';
       case ExportField.attendedFullMeeting:
         return 'Attended Full Meeting';
-      case ExportField.latitude:
-        return 'Latitude';
-      case ExportField.longitude:
-        return 'Longitude';
-      case ExportField.areLocationsSame:
-        return 'Are Locations Same';
       default:
         return '';
     }

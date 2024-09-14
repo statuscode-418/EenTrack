@@ -1,6 +1,5 @@
-import 'package:eentrack/models/attendee_model.dart';
 import 'package:eentrack/models/meeting_model.dart';
-import 'package:eentrack/screen/meeting_details_screen/components/attendee_sliver_list.dart';
+import 'package:eentrack/models/participant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -11,13 +10,13 @@ enum AttendeeFilter {
 
 class MeetingDetailsView extends StatefulWidget {
   final Meeting meeting;
-  final List<Attendee> attendees;
+  final List<ParticipantModel> participants;
   final bool entry;
 
   const MeetingDetailsView({
     super.key,
     required this.meeting,
-    required this.attendees,
+    required this.participants,
     required this.entry,
   });
 
@@ -31,16 +30,16 @@ class _MeetingDetailsViewState extends State<MeetingDetailsView> {
     AttendeeFilter.left: false,
   };
 
-  List<Attendee> get filteredAttendees {
-    var filtered = widget.attendees;
+  List<ParticipantModel> get filteredAttendees {
+    var filtered = widget.participants;
     for (var key in filter.keys) {
       if (filter[key]!) {
         switch (key) {
           case AttendeeFilter.present:
-            filtered = filtered.where((element) => element.isPresent).toList();
+            // filtered = filtered.where((element) => element.isPresent).toList();
             break;
           case AttendeeFilter.left:
-            filtered = filtered.where((element) => element.isLeft).toList();
+            // filtered = filtered.where((element) => element.isLeft).toList();
             break;
         }
       }
@@ -81,8 +80,16 @@ class _MeetingDetailsViewState extends State<MeetingDetailsView> {
           ),
           SliverPadding(
             padding: const EdgeInsets.all(8.0),
-            sliver: AttendeeSliverList(
-              attendees: filteredAttendees,
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final participant = filteredAttendees[index];
+                  return ListTile(
+                    title: Text(participant.name),
+                  );
+                },
+                childCount: filteredAttendees.length,
+              ),
             ),
           )
         ],

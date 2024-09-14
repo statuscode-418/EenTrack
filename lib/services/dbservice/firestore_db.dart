@@ -193,25 +193,6 @@ class FirestoreDB implements DBModel {
   @override
   Future<void> addAttendee(String uid, String mid, Attendee attendee) async {
     try {
-      // Position currentPosition = await getCurrentLocation();
-
-      // Meeting? meeting = await getMeeting(uid, mid);
-
-      // if (meeting == null) {
-      //   throw DBException('Meeing not found');
-      // }
-
-      // double distance = Geolocator.distanceBetween(
-      //   currentPosition.latitude,
-      //   currentPosition.longitude,
-      //   meeting.latitude,
-      //   meeting.longitude,
-      // );
-
-      // if (distance > 50) {
-      //   throw DBException('Host is far away from the meeting');
-      // }
-
       await _db
           .collection(db_consts.meetings)
           .doc(mid)

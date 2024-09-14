@@ -28,8 +28,6 @@ class Meeting implements DataModel {
     String? title,
     String? description,
     DateTime? date,
-    double? latitude,
-    double? longitude,
   }) {
     return Meeting(
       id: id ?? this.id,

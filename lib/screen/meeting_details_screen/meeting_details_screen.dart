@@ -1,11 +1,13 @@
 import 'package:eentrack/models/attendee_model.dart';
 import 'package:eentrack/models/export_fields.dart';
 import 'package:eentrack/models/meeting_model.dart';
+import 'package:eentrack/models/participant_model.dart';
 import 'package:eentrack/screen/dialog/alart_dialog.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/attendee_search_delegate.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/co_host_manager.dart';
 import 'package:eentrack/screen/meeting_details_screen/meeting_details_view.dart';
 import 'package:eentrack/screen/scanning_screen/scanning_screen.dart';
+import 'package:eentrack/screen/upload_meeting_details/upload_meeting_details_screen.dart';
 import 'package:eentrack/services/exportservice/export_service.dart';
 import 'package:flutter/material.dart';
 
@@ -127,6 +129,20 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
   List<Widget> _buildActions() {
     return [
       IconButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => UploadMeetingDetailsScreen(
+                  meetingId: widget.meeting.id,
+                  dbProvider: widget.dbprovider,
+                ),
+              ),
+            );
+          },
+          icon: const Icon(
+            Icons.upload,
+          )),
+      IconButton(
         onPressed: () => showSearch(
             context: context, delegate: AttendeeSearchDelegate(attendees)),
         icon: const Icon(Icons.search),
@@ -142,9 +158,8 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
         title: Text(widget.meeting.title),
         actions: _buildActions(),
       ),
-      body: StreamBuilder<List<Attendee>>(
-          stream: widget.dbprovider
-              .getAttendees(widget.meeting.hostid, widget.meeting.id),
+      body: StreamBuilder<List<ParticipantModel>>(
+          stream: widget.dbprovider.getParticipants(widget.meeting.id),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const LinearProgressIndicator();
@@ -154,11 +169,14 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
                 child: Text('Something went wrong'),
               );
             }
-            attendees = snapshot.data!;
+            // attendees = snapshot.data!;
+
+            List<ParticipantModel> participants = snapshot.data!;
+
             return MeetingDetailsView(
               meeting: widget.meeting,
               entry: entry,
-              attendees: attendees,
+              participants: participants,
             );
           }),
       floatingActionButton: FloatingActionButton(

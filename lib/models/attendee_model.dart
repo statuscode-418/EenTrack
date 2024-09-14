@@ -17,8 +17,6 @@ class Attendee implements DataModel {
   DateTime? addedOn;
   DateTime? leftOn;
   Map<String, Timestamp> breaks = {};
-  double? latitude;
-  double? longitude;
 
   bool get isPresent => addedOn != null;
   bool get isLeft => leftOn != null;
@@ -37,8 +35,6 @@ class Attendee implements DataModel {
     this.leftOn,
     required this.github,
     required this.linkedin,
-    this.latitude,
-    this.longitude,
   });
 
   Attendee.newAttendee({
@@ -52,9 +48,7 @@ class Attendee implements DataModel {
         addedOn = null,
         leftOn = null,
         github = '',
-        linkedin = '',
-        latitude = null,
-        longitude = null;
+        linkedin = '';
 
   factory Attendee.fromMap(Map<String, dynamic> json) {
     return Attendee(
@@ -69,8 +63,6 @@ class Attendee implements DataModel {
       leftOn: json[consts.leftOn]?.toDate(),
       github: json[consts.github],
       linkedin: json[consts.linkedin],
-      latitude: json[consts.latitude],
-      longitude: json[consts.longitude],
     );
   }
 
@@ -87,8 +79,6 @@ class Attendee implements DataModel {
         consts.leftOn: leftOn != null ? Timestamp.fromDate(leftOn!) : null,
         consts.github: github,
         consts.linkedin: linkedin,
-        consts.latitude: latitude,
-        consts.longitude: longitude,
       };
 
   String getField(ExportField field) {

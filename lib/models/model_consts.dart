@@ -5,8 +5,6 @@ const coHosts = 'coHosts';
 const title = 'title';
 const description = 'description';
 const date = 'date';
-const latitude = 'latitude';
-const longitude = 'longitude';
 
 // Attendee Consts
 const uid = 'uid';

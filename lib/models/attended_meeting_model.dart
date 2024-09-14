@@ -8,8 +8,6 @@ class AttendedMeetings implements DataModel {
   final String title;
   final String description;
   final DateTime date;
-  final double latitude;
-  final double longitude;
 
   AttendedMeetings({
     required this.id,
@@ -17,8 +15,6 @@ class AttendedMeetings implements DataModel {
     required this.title,
     required this.description,
     required this.date,
-    required this.latitude,
-    required this.longitude,
   });
 
   AttendedMeetings copyWith({
@@ -27,17 +23,14 @@ class AttendedMeetings implements DataModel {
     String? title,
     String? description,
     DateTime? date,
-    double? latitude,
-    double? longitude,
   }) {
     return AttendedMeetings(
-        id: id ?? this.id,
-        host: host ?? this.host,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        date: date ?? this.date,
-        latitude: latitude ?? this.latitude,
-        longitude: longitude ?? this.longitude);
+      id: id ?? this.id,
+      host: host ?? this.host,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      date: date ?? this.date,
+    );
   }
 
   @override
@@ -48,8 +41,6 @@ class AttendedMeetings implements DataModel {
       'title': title,
       'description': description,
       'date': date.millisecondsSinceEpoch,
-      'latitude': latitude,
-      'longitude': longitude,
     };
   }
 
@@ -60,8 +51,6 @@ class AttendedMeetings implements DataModel {
       title: map['title'],
       description: map['description'],
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      latitude: map['latitude'],
-      longitude: map['longitude'],
     );
   }
 
