@@ -19,3 +19,6 @@ const addedOn = 'addedOn';
 const leftOn = 'leftOn';
 const github = 'github';
 const linkedin = 'linkedin';
+
+const mid = 'mid';
+const time = 'time';

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eentrack/models/attendee_model.dart';
+import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/model_consts.dart' as model_consts;
 import 'package:eentrack/models/participant_model.dart';
 
@@ -444,6 +445,66 @@ class FirestoreDB implements DBModel {
           .collection(db_consts.participant)
           .doc(uid)
           .update({checkPointId: FieldValue.delete()});
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<void> createCheckPoint(CheckpointModel checkPoint) async {
+    try {
+      await _db
+          .collection(db_consts.meetings)
+          .doc(checkPoint.mid)
+          .collection(db_consts.checkPoint)
+          .doc(checkPoint.id)
+          .set(checkPoint.toMap());
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<void> deleteCheckPoint(CheckpointModel checkPoint) async {
+    try {
+      await _db
+          .collection(db_consts.meetings)
+          .doc(checkPoint.mid)
+          .collection(db_consts.checkPoint)
+          .doc(checkPoint.id)
+          .delete();
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Stream<List<CheckpointModel>> getCheckPoints(String mid) {
+    try {
+      return _db
+          .collection(db_consts.meetings)
+          .doc(mid)
+          .collection(db_consts.checkPoint)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.docs
+            .map((doc) => CheckpointModel.fromMap(doc.data()))
+            .toList();
+      });
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<void> updateCheckPoint(CheckpointModel checkPoint) async {
+    try {
+      await _db
+          .collection(db_consts.meetings)
+          .doc(checkPoint.mid)
+          .collection(db_consts.checkPoint)
+          .doc(checkPoint.id)
+          .update(checkPoint.toMap());
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');
     }

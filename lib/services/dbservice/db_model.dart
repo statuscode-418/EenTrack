@@ -1,4 +1,5 @@
 import 'package:eentrack/models/attendee_model.dart';
+import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/participant_model.dart';
 
 import '../../models/meeting_model.dart';
@@ -39,4 +40,8 @@ abstract class DBModel {
   Future<void> markCheckPoint(String mid, String uid, String checkPointId);
   Future<void> unmarkCheckPoint(String mid, String uid, String checkPointId);
 
+  Future<void> createCheckPoint(CheckpointModel checkPoint);
+  Future<void> updateCheckPoint(CheckpointModel checkPoint);
+  Future<void> deleteCheckPoint(CheckpointModel checkPoint);
+  Stream<List<CheckpointModel>> getCheckPoints(String mid);
 }
