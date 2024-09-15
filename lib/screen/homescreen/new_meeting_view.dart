@@ -1,3 +1,4 @@
+import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/meeting_model.dart';
 import 'package:eentrack/models/user_model.dart';
 import 'package:eentrack/screen/dialog/meetingdetails_dialog.dart';
@@ -23,7 +24,13 @@ class NewMeetingView extends StatelessWidget {
     void showMeetingForm() {
       showMeetingFormDialog(context, user.uid).then((value) {
         if (value != null) {
-          dbprovider.createMeeting(user.uid, value).then((value) => {
+          Meeting meeting = value['meeting'];
+          CheckpointModel entryCheckpoint = value['entryCheckpoint'];
+          CheckpointModel exitCheckpoint = value['exitCheckpoint'];
+
+          dbprovider.createCheckPoint(entryCheckpoint);
+          dbprovider.createCheckPoint(exitCheckpoint);
+          dbprovider.createMeeting(user.uid, meeting).then((value) => {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MeetingDetailsScreen(
