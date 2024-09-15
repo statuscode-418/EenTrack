@@ -169,14 +169,13 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
                 child: Text('Something went wrong'),
               );
             }
-            // attendees = snapshot.data!;
-
             List<ParticipantModel> participants = snapshot.data!;
 
             return MeetingDetailsView(
               meeting: widget.meeting,
               entry: entry,
               participants: participants,
+              dbModel: widget.dbprovider,
             );
           }),
       floatingActionButton: FloatingActionButton(
