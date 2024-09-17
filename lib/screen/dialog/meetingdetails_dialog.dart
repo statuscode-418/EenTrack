@@ -1,6 +1,7 @@
 import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/meeting_model.dart';
 import 'package:eentrack/screen/shared/date_time_picker.dart';
+import 'package:eentrack/screen/shared/show_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
@@ -93,6 +94,17 @@ Future<Map<String, dynamic>?> showMeetingFormDialog(
                 ),
                 TextButton(
                   onPressed: () {
+                    if (entryTime!.isAfter(exitTime!)) {
+                      showSnackbar(
+                          context, 'Entry time cannot be after exit time');
+                      return;
+                    }
+
+                    if (entryTime!.isBefore(DateTime.now())) {
+                      showSnackbar(context, 'Entry time cannot be in the past');
+                      return;
+                    }
+
                     String mid =
                         DateTime.now().millisecondsSinceEpoch.toString();
                     var meeting = Meeting.newMeeting(
@@ -117,11 +129,17 @@ Future<Map<String, dynamic>?> showMeetingFormDialog(
                       title: 'Exit',
                       time: exitTime!,
                     );
-                    Navigator.of(context).pop({
-                      'meeting': meeting,
-                      'entryCheckpoint': entryCheckPoint,
-                      'exitCheckpoint': exitCheckPoint,
-                    });
+
+                    if (entryTime != null && exitTime != null) {
+                      Navigator.of(context).pop({
+                        'meeting': meeting,
+                        'entryCheckpoint': entryCheckPoint,
+                        'exitCheckpoint': exitCheckPoint,
+                      });
+                    } else {
+                      showSnackbar(
+                          context, 'Please fill all entry exit time fields');
+                    }
                   },
                   child: const Text('Create'),
                 ),

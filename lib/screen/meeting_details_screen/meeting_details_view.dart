@@ -2,6 +2,7 @@ import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/meeting_model.dart';
 import 'package:eentrack/models/participant_model.dart';
 import 'package:eentrack/screen/shared/date_time_picker.dart';
+import 'package:eentrack/screen/shared/show_snackbar.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -102,20 +103,29 @@ class _MeetingDetailsViewState extends State<MeetingDetailsView> {
               ),
               TextButton(
                 onPressed: () async {
-                  if (checkpointController.text.isNotEmpty) {
+                  if (checkpointController.text.isNotEmpty &&
+                      dateTime != null) {
                     final checkpoint = CheckpointModel(
-                        id: const Uuid().v4(),
-                        mid: widget.meeting.id,
-                        uid: widget.meeting.hostid,
-                        title: checkpointController.text,
-                        time: dateTime!);
+                      id: const Uuid().v4(),
+                      mid: widget.meeting.id,
+                      uid: widget.meeting.hostid,
+                      title: checkpointController.text,
+                      time: dateTime!,
+                    );
+
                     await widget.dbModel.createCheckPoint(checkpoint);
+
                     for (var participant in widget.participants) {
                       participant.markCheckPoint(checkpoint.id);
+
                       await widget.dbModel.updateParticipant(participant);
                     }
+
+                    Navigator.of(context).pop();
+                  } else {
+                    showSnackbar(context,
+                        'Please fill all fields before adding a checkpoint.');
                   }
-                  Navigator.of(context).pop();
                 },
                 child: const Text("Add"),
               ),
@@ -191,7 +201,15 @@ class _MeetingDetailsViewState extends State<MeetingDetailsView> {
                       Row(
                         children: List.generate(
                           participantCheckpoints.length,
-                          (index) => const Icon(Icons.clear, color: Colors.red),
+                          (index) => Icon(
+                            participant.isChecked(participantCheckpoints[index])
+                                ? Icons.check
+                                : Icons.clear,
+                            color: participant
+                                    .isChecked(participantCheckpoints[index])
+                                ? Colors.green
+                                : Colors.red,
+                          ),
                         ),
                       ),
                       const Divider(),
