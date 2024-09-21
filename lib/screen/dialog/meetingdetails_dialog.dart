@@ -94,6 +94,10 @@ Future<Map<String, dynamic>?> showMeetingFormDialog(
                 ),
                 TextButton(
                   onPressed: () {
+                    if (entryTime == null || exitTime == null) {
+                      showSnackbar(context, 'Please fill all fields');
+                      return;
+                    }
                     if (entryTime!.isAfter(exitTime!)) {
                       showSnackbar(
                           context, 'Entry time cannot be after exit time');
@@ -130,16 +134,11 @@ Future<Map<String, dynamic>?> showMeetingFormDialog(
                       time: exitTime!,
                     );
 
-                    if (entryTime != null && exitTime != null) {
-                      Navigator.of(context).pop({
-                        'meeting': meeting,
-                        'entryCheckpoint': entryCheckPoint,
-                        'exitCheckpoint': exitCheckPoint,
-                      });
-                    } else {
-                      showSnackbar(
-                          context, 'Please fill all entry exit time fields');
-                    }
+                    Navigator.of(context).pop({
+                      'meeting': meeting,
+                      'entryCheckpoint': entryCheckPoint,
+                      'exitCheckpoint': exitCheckPoint,
+                    });
                   },
                   child: const Text('Create'),
                 ),

@@ -1,14 +1,9 @@
-import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/meeting_model.dart';
-import 'package:eentrack/models/user_model.dart';
-import 'package:eentrack/screen/dialog/meetingdetails_dialog.dart';
 import 'package:eentrack/screen/homescreen/home_screen_vm.dart';
 import 'package:eentrack/screen/shared/multi_selection_switch.dart';
-import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:rxdart/rxdart.dart';
 
 import '../meeting_details_screen/meeting_details_screen.dart';
 
@@ -22,7 +17,7 @@ class NewMeetingView extends StatelessWidget {
     final vm = context.read<HomeScreenVM>();
     return Stack(
       children: [
-        MeetingsList(),
+        const MeetingsList(),
         Positioned(
           bottom: 20,
           left: 0,
@@ -65,6 +60,7 @@ class MeetingsList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
+          if (!vm.isInitialized) const LinearProgressIndicator(),
           MultiSelectionSwitch(
             lables: MeetingType.values.map((e) => e.name).toList(),
             selectedIndex: vm.type.index,
