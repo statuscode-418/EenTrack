@@ -1,20 +1,19 @@
-import 'package:eentrack/models/user_model.dart';
-import 'package:eentrack/services/qr_service/qr_parser.dart';
+import 'package:eentrack/screen/homescreen/home_screen_vm.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_bar_code/qr/src/qr_code.dart';
 
 class DetailsQrView extends StatelessWidget {
-  final User user;
-  const DetailsQrView({super.key, required this.user});
+  const DetailsQrView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var userString = QrParser.encodeUid(user.uid);
+    final vm = context.read<HomeScreenVM>();
     return Center(
         child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: QRCode(
-        data: userString,
+        data: vm.userQrString,
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     ));

@@ -1,87 +1,64 @@
 import 'package:eentrack/bloc/authbloc/auth_bloc.dart';
 import 'package:eentrack/bloc/authbloc/auth_events.dart';
 import 'package:eentrack/models/user_model.dart';
-import 'package:eentrack/screen/dialog/alart_dialog.dart';
-import 'package:eentrack/screen/dialog/user_settings_dialog.dart';
 import 'package:eentrack/screen/homescreen/details_qr_view.dart';
+import 'package:eentrack/screen/homescreen/home_screen_vm.dart';
+import 'package:eentrack/screen/shared/show_snackbar.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import 'new_meeting_view.dart';
 import 'profile_view.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   final User user;
   final DBModel dbprovider;
   final String? error;
   final bool isLoading;
+
   const HomeScreen({
-    Key? key,
-    this.isLoading = false,
-    this.error,
+    super.key,
     required this.user,
     required this.dbprovider,
-  }) : super(key: key);
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 1;
-
-  late final List<Widget> _screens;
-
-  void _logout() async {
-    var res = await showAlartDialog(
-        'Loging Out', 'You sure want to log out?', context);
-    if (res != Option.ok) return;
-    if (!context.mounted) return;
-    BlocProvider.of<AuthBloc>(context).add(AuthEventLogout());
-  }
-
-  void _editProfile() {
-    if (!context.mounted) return;
-    BlocProvider.of<AuthBloc>(context).add(
-      AuthEventShowUpdateUserDetails(user: widget.user),
-    );
-  }
-
-  void _showSettingsDialog() async {
-    var res = await showSettingsDialog(context, widget.user);
-    if (res == null) return;
-    if (res == SettingOptions.editProfile) _editProfile();
-    if (res == SettingOptions.logout) _logout();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.error != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(widget.error!),
-          ),
-        );
-      });
-    }
-
-    _screens = [
-      DetailsQrView(user: widget.user),
-      ProfileView(
-        user: widget.user,
-      ),
-      NewMeetingView(
-        user: widget.user,
-        dbprovider: widget.dbprovider,
-      ),
-    ];
-  }
+    this.error,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (error != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showSnackbar(context, "Something Went wrong");
+      });
+      return const Center(
+        child: Text("Something Went Wrong"),
+      );
+    }
+    return ChangeNotifierProvider(
+      create: (context) => HomeScreenVM(
+        context,
+        user: user,
+        db: dbprovider,
+      ),
+      child: const HomeScreenConsumer(),
+    );
+  }
+}
+
+class HomeScreenConsumer extends StatelessWidget {
+  const HomeScreenConsumer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var vm = context.read<HomeScreenVM>();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -89,15 +66,22 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('EenTrack'),
         actions: [
           IconButton(
-            onPressed: _showSettingsDialog, //_onLogout(context),
+            onPressed: vm.showSettings, //_onLogout(context),
             icon: Image.asset('assets/logo.png'),
           )
         ],
       ),
-      body: _screens[_currentIndex],
+      body: PageView(
+        controller: vm.homePageController,
+        children: const [
+          DetailsQrView(),
+          ProfileView(),
+          NewMeetingView(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        currentIndex: _currentIndex,
+        currentIndex: vm.homePageController.page!.round(),
         useLegacyColorScheme: false,
         type: BottomNavigationBarType.shifting,
         iconSize: 30,
@@ -116,9 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          vm.homePageController.jumpToPage(index);
         },
       ),
     );

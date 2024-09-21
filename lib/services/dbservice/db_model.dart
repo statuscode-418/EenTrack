@@ -17,8 +17,10 @@ abstract class DBModel {
   // Meetings
   Future<Meeting> createMeeting(String uid, Meeting meeting);
   Future<Meeting?> getMeeting(String uid, String mid);
-  Stream<List<Meeting>> getMeetings(String uid);
-  Stream<List<Meeting>> getCoHostedMeetings(String uid);
+  Stream<List<Meeting>> getMeetingsStream(String uid);
+  Stream<List<Meeting>> getCoHostedMeetingsStream(String uid);
+  Future<List<Meeting>> getMeetings(String uid);
+  Future<List<Meeting>> getCoHostedMeetings(String uid);
   Future<Meeting> updateMeeting(String uid, Meeting meeting);
   Future<void> deleteMeeting(String uid, String mid);
 

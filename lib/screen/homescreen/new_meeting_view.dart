@@ -2,51 +2,27 @@ import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/meeting_model.dart';
 import 'package:eentrack/models/user_model.dart';
 import 'package:eentrack/screen/dialog/meetingdetails_dialog.dart';
+import 'package:eentrack/screen/homescreen/home_screen_vm.dart';
 import 'package:eentrack/screen/shared/multi_selection_switch.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../meeting_details_screen/meeting_details_screen.dart';
 
 class NewMeetingView extends StatelessWidget {
-  final User user;
-  final DBModel dbprovider;
   const NewMeetingView({
-    Key? key,
-    required this.user,
-    required this.dbprovider,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    void showMeetingForm() {
-      showMeetingFormDialog(context, user.uid).then((value) {
-        if (value != null) {
-          Meeting meeting = value['meeting'];
-          CheckpointModel entryCheckpoint = value['entryCheckpoint'];
-          CheckpointModel exitCheckpoint = value['exitCheckpoint'];
-
-          dbprovider.createCheckPoint(entryCheckpoint);
-          dbprovider.createCheckPoint(exitCheckpoint);
-          dbprovider.createMeeting(user.uid, meeting).then((value) => {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => MeetingDetailsScreen(
-                      meeting: value,
-                      dbprovider: dbprovider,
-                    ),
-                  ),
-                )
-              });
-        }
-      });
-    }
-
+    final vm = context.read<HomeScreenVM>();
     return Stack(
       children: [
-        MeetingsList(dbprovider: dbprovider, user: user),
+        MeetingsList(),
         Positioned(
           bottom: 20,
           left: 0,
@@ -54,7 +30,7 @@ class NewMeetingView extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: ElevatedButton(
-              onPressed: showMeetingForm,
+              onPressed: vm.showMeetingForm,
               child: const Text('New Meeting'),
             ),
           ),
@@ -62,11 +38,6 @@ class NewMeetingView extends StatelessWidget {
       ],
     );
   }
-}
-
-enum MeetingType {
-  hosted,
-  coHosted,
 }
 
 extension MeetingTypeExtension on MeetingType {
@@ -82,102 +53,48 @@ extension MeetingTypeExtension on MeetingType {
   }
 }
 
-class MeetingsList extends StatefulWidget {
+class MeetingsList extends StatelessWidget {
   const MeetingsList({
     super.key,
-    required this.dbprovider,
-    required this.user,
   });
-
-  final DBModel dbprovider;
-  final User user;
-
-  @override
-  State<MeetingsList> createState() => _MeetingsListState();
-}
-
-class _MeetingsListState extends State<MeetingsList> {
-  late Stream<List<Meeting>> _meetingsStream;
-  late Stream<List<Meeting>> _coHostedMeetingsStream;
-  late Stream<List<List<Meeting>>> _meetingsListStream;
-
-  List<Meeting> _meetings = [];
-  List<Meeting> _coHostedMeetings = [];
-  MeetingType _meetingType = MeetingType.hosted;
-
-  List<Meeting> get filteredMeetings {
-    switch (_meetingType) {
-      case MeetingType.hosted:
-        return _meetings;
-      case MeetingType.coHosted:
-        return _coHostedMeetings;
-      default:
-        return _meetings;
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _meetingsStream = widget.dbprovider.getMeetings(widget.user.uid);
-    _coHostedMeetingsStream =
-        widget.dbprovider.getCoHostedMeetings(widget.user.uid);
-    _meetingsListStream =
-        CombineLatestStream.list([_meetingsStream, _coHostedMeetingsStream]);
-  }
 
   @override
   Widget build(BuildContext context) {
+    var vm = context.watch<HomeScreenVM>();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: StreamBuilder<List<List<Meeting>>>(
-          stream: _meetingsListStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Center(
-                child: Text('Something went wrong'),
-              );
-            }
-            if (!snapshot.hasData) {
-              return const LinearProgressIndicator();
-            }
-            var data = snapshot.data as List<List<Meeting>>;
-            _meetings = data[0];
-            _coHostedMeetings = data[1];
-            return Column(
-              children: [
-                MultiSelectionSwitch(
-                  lables: MeetingType.values.map((e) => e.name).toList(),
-                  selectedIndex: MeetingType.values.indexOf(_meetingType),
-                  onChanged: (i) => setState(() {
-                    _meetingType = MeetingType.values[i];
-                  }),
-                ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filteredMeetings.length,
-                    itemBuilder: (BuildContext context, index) {
-                      final meeting = filteredMeetings[index];
-                      return MeetingTile(
-                        meeting: meeting,
-                        onTap: (meeting) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => MeetingDetailsScreen(
-                                meeting: meeting,
-                                dbprovider: widget.dbprovider,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          }),
+      child: Column(
+        children: [
+          MultiSelectionSwitch(
+            lables: MeetingType.values.map((e) => e.name).toList(),
+            selectedIndex: vm.type.index,
+            onChanged: (i) {
+              vm.changeType(MeetingType.values[i]);
+            },
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: ListView.builder(
+              itemCount: vm.meetings.length,
+              itemBuilder: (BuildContext context, index) {
+                return MeetingTile(
+                  meeting: vm.meetings[index],
+                  onTap: (meeting) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => MeetingDetailsScreen(
+                          meeting: meeting,
+                          dbprovider: vm.db,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

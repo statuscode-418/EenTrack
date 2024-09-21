@@ -139,7 +139,7 @@ class FirestoreDB implements DBModel {
   }
 
   @override
-  Stream<List<Meeting>> getMeetings(String uid) {
+  Stream<List<Meeting>> getMeetingsStream(String uid) {
     try {
       return _db
           .collection(db_consts.meetings)
@@ -159,7 +159,26 @@ class FirestoreDB implements DBModel {
   }
 
   @override
-  Stream<List<Meeting>> getCoHostedMeetings(String uid) {
+  Future<List<Meeting>> getMeetings(String uid) async {
+    try {
+      var meetingsSnap = await _db
+          .collection(db_consts.meetings)
+          .orderBy(model_consts.date, descending: true)
+          .where(model_consts.hostid, isEqualTo: uid)
+          .get();
+
+      return meetingsSnap.docs
+          .map((doc) => Meeting.fromMap(doc.data(), uid))
+          .toList();
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    } on Exception catch (e) {
+      throw DBException(e.toString());
+    }
+  }
+
+  @override
+  Stream<List<Meeting>> getCoHostedMeetingsStream(String uid) {
     try {
       return _db
           .collection(db_consts.meetings)
@@ -171,6 +190,20 @@ class FirestoreDB implements DBModel {
             .map((doc) => Meeting.fromMap(doc.data(), uid))
             .toList();
       });
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<List<Meeting>> getCoHostedMeetings(String uid) async {
+    try {
+      var snap = await _db
+          .collection(db_consts.meetings)
+          .where(model_consts.coHosts, arrayContains: uid)
+          .orderBy(model_consts.date, descending: true)
+          .get();
+      return snap.docs.map((doc) => Meeting.fromMap(doc.data(), uid)).toList();
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');
     }

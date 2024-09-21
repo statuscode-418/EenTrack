@@ -1,17 +1,16 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:eentrack/screen/homescreen/home_screen_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:random_avatar/random_avatar.dart';
 
-import '../../models/user_model.dart';
 import '../authscreens/shared/customcontainer.dart';
 
 class ProfileView extends StatelessWidget {
-  final User user;
   const ProfileView({
     super.key,
-    required this.user,
   });
 
   void copyToClipboard(String text) {
@@ -20,6 +19,7 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var user = context.read<HomeScreenVM>().user;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Animate(
@@ -84,8 +84,7 @@ class ProfileView extends StatelessWidget {
               height: 20,
             ),
             CustomTextWidget(
-              text:
-                  user.github.isEmpty ? 'Github Not Available' : user.github,
+              text: user.github.isEmpty ? 'Github Not Available' : user.github,
               trailing: IconButton(
                 onPressed: () {
                   copyToClipboard(user.github);
