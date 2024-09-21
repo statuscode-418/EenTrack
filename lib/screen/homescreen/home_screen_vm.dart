@@ -15,15 +15,25 @@ import 'package:eentrack/services/qr_service/qr_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-enum MeetingType {
-  hosted,
-  coHosted,
-}
-
 class HomeScreenVM extends AppVM {
   final DBModel db;
   final User user;
 
+  bool _isInitialized = false;
+
+  MeetingType _type = MeetingType.hosted;
+  StreamSubscription? _meetingSubscription;
+
+  StreamSubscription? _cohostedMeetingSubscription;
+
+  List<Meeting> _hostedMeetings = [];
+
+  List<Meeting> _cohostedMeetings = [];
+  PageController homePageController = PageController(
+    initialPage: 1,
+  );
+
+  int pageNo = 1;
   HomeScreenVM(
     super.context, {
     required this.user,
@@ -32,8 +42,30 @@ class HomeScreenVM extends AppVM {
     init();
   }
 
-  bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
+  List<Meeting> get meetings {
+    if (_type == MeetingType.hosted) {
+      return _hostedMeetings;
+    } else {
+      return _cohostedMeetings;
+    }
+  }
+
+  MeetingType get type => _type;
+
+  String get userQrString => QrParser.encodeUid(user.uid);
+
+  void changeType(MeetingType type) {
+    _type = type;
+    safeNotify();
+  }
+
+  @override
+  void dispose() {
+    _meetingSubscription?.cancel();
+    _cohostedMeetingSubscription?.cancel();
+    super.dispose();
+  }
 
   Future<void> init() async {
     var allMeetings = await Future.wait([
@@ -68,25 +100,6 @@ class HomeScreenVM extends AppVM {
     _isInitialized = true;
   }
 
-  String get userQrString => QrParser.encodeUid(user.uid);
-
-  MeetingType _type = MeetingType.hosted;
-  MeetingType get type => _type;
-
-  StreamSubscription? _meetingSubscription;
-  StreamSubscription? _cohostedMeetingSubscription;
-
-  List<Meeting> _hostedMeetings = [];
-  List<Meeting> _cohostedMeetings = [];
-
-  List<Meeting> get meetings {
-    if (_type == MeetingType.hosted) {
-      return _hostedMeetings;
-    } else {
-      return _cohostedMeetings;
-    }
-  }
-
   Future<void> showMeetingForm() async {
     var value = await showMeetingFormDialog(context, user.uid);
     if (value == null) return;
@@ -108,17 +121,21 @@ class HomeScreenVM extends AppVM {
     );
   }
 
-  void changeType(MeetingType type) {
-    _type = type;
-    safeNotify();
+  void showSettings() async {
+    var res = await showSettingsDialog(context, user);
+    if (res == null) return;
+    if (res == SettingOptions.editProfile) _editProfile();
+    if (res == SettingOptions.logout) _logout();
   }
 
-  void _logout() async {
-    var res = await showAlartDialog(
-        'Loging Out', 'You sure want to log out?', context);
-    if (res != Option.ok) return;
-    if (!context.mounted) return;
-    BlocProvider.of<AuthBloc>(context).add(AuthEventLogout());
+  void switchPage(int i) {
+    pageNo = i;
+    homePageController.animateToPage(
+      pageNo,
+      curve: Curves.easeInOutCubic,
+      duration: const Duration(milliseconds: 250),
+    );
+    safeNotify();
   }
 
   void _editProfile() {
@@ -128,19 +145,16 @@ class HomeScreenVM extends AppVM {
     );
   }
 
-  void showSettings() async {
-    var res = await showSettingsDialog(context, user);
-    if (res == null) return;
-    if (res == SettingOptions.editProfile) _editProfile();
-    if (res == SettingOptions.logout) _logout();
+  void _logout() async {
+    var res = await showAlartDialog(
+        'Loging Out', 'You sure want to log out?', context);
+    if (res != Option.ok) return;
+    if (!context.mounted) return;
+    BlocProvider.of<AuthBloc>(context).add(AuthEventLogout());
   }
+}
 
-  PageController homePageController = PageController();
-
-  @override
-  void dispose() {
-    _meetingSubscription?.cancel();
-    _cohostedMeetingSubscription?.cancel();
-    super.dispose();
-  }
+enum MeetingType {
+  hosted,
+  coHosted,
 }

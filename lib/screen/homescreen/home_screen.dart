@@ -58,7 +58,7 @@ class HomeScreenConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var vm = context.read<HomeScreenVM>();
+    var vm = context.watch<HomeScreenVM>();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -73,6 +73,7 @@ class HomeScreenConsumer extends StatelessWidget {
       ),
       body: PageView(
         controller: vm.homePageController,
+        physics: const NeverScrollableScrollPhysics(),
         children: const [
           DetailsQrView(),
           ProfileView(),
@@ -81,7 +82,7 @@ class HomeScreenConsumer extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        currentIndex: vm.homePageController.page!.round(),
+        currentIndex: vm.pageNo,
         useLegacyColorScheme: false,
         type: BottomNavigationBarType.shifting,
         iconSize: 30,
@@ -100,7 +101,7 @@ class HomeScreenConsumer extends StatelessWidget {
           )
         ],
         onTap: (index) {
-          vm.homePageController.jumpToPage(index);
+          vm.switchPage(index);
         },
       ),
     );
