@@ -9,7 +9,6 @@ import 'package:eentrack/models/user_model.dart';
 import 'package:eentrack/screen/dialog/alart_dialog.dart';
 import 'package:eentrack/screen/dialog/meetingdetails_dialog.dart';
 import 'package:eentrack/screen/dialog/user_settings_dialog.dart';
-import 'package:eentrack/screen/meeting_details_screen/meeting_details_screen.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:eentrack/services/qr_service/qr_parser.dart';
 import 'package:flutter/material.dart';
@@ -111,14 +110,11 @@ class HomeScreenVM extends AppVM {
     db.createCheckPoint(exitCheckpoint);
     meeting = await db.createMeeting(user.uid, meeting);
     if (!context.mounted) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MeetingDetailsView(
-          meeting: meeting,
-          dbprovider: db,
-        ),
-      ),
-    );
+    Navigator.of(context).pushNamed('/meeting/details', arguments: {
+      'user': user,
+      'meeting': meeting,
+      'db': db,
+    });
   }
 
   void showSettings() async {

@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../meeting_details_screen/meeting_details_screen.dart';
-
 class NewMeetingView extends StatelessWidget {
   const NewMeetingView({
     super.key,
@@ -76,13 +74,13 @@ class MeetingsList extends StatelessWidget {
                 return MeetingTile(
                   meeting: vm.meetings[index],
                   onTap: (meeting) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => MeetingDetailsView(
-                          meeting: meeting,
-                          dbprovider: vm.db,
-                        ),
-                      ),
+                    Navigator.of(context).pushNamed(
+                      '/meeting_details',
+                      arguments: {
+                        'meeting': meeting,
+                        'user': vm.user,
+                        'db': vm.db,
+                      },
                     );
                   },
                 );

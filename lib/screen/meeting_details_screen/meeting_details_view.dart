@@ -1,12 +1,9 @@
-import 'package:eentrack/models/meeting_model.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/attendee_search_delegate.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/participant_card.dart';
 import 'package:eentrack/screen/meeting_details_screen/meeting_details_screen_vm.dart';
 import 'package:eentrack/screen/upload_meeting_details/upload_meeting_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../services/dbservice/db_model.dart';
 
 enum PopupMenu { export, cohost, delete }
 
@@ -35,12 +32,8 @@ extension PopupMenuExtension on PopupMenu {
 }
 
 class MeetingDetailsView extends StatelessWidget {
-  final Meeting meeting;
-  final DBModel dbprovider;
   const MeetingDetailsView({
     super.key,
-    required this.meeting,
-    required this.dbprovider,
   });
 
   @override
@@ -48,15 +41,15 @@ class MeetingDetailsView extends StatelessWidget {
     var vm = context.read<MeetingDetailsScreenVM>();
     return Scaffold(
       appBar: AppBar(
-        title: Text(meeting.title),
+        title: Text(vm.meeting.title),
         actions: [
           IconButton(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => UploadMeetingDetailsScreen(
-                      meetingId: meeting.id,
-                      dbProvider: dbprovider,
+                      meetingId: vm.meeting.id,
+                      dbProvider: vm.db,
                     ),
                   ),
                 );
@@ -71,7 +64,7 @@ class MeetingDetailsView extends StatelessWidget {
             ),
             icon: const Icon(Icons.search),
           ),
-          if (meeting.isHost)
+          if (vm.meeting.isHost)
             PopupMenuButton(
               itemBuilder: (context) => PopupMenu.values
                   .map((e) => PopupMenuItem(

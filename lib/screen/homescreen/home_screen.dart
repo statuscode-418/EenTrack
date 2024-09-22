@@ -1,5 +1,3 @@
-import 'package:eentrack/bloc/authbloc/auth_bloc.dart';
-import 'package:eentrack/bloc/authbloc/auth_events.dart';
 import 'package:eentrack/models/user_model.dart';
 import 'package:eentrack/screen/homescreen/details_qr_view.dart';
 import 'package:eentrack/screen/homescreen/home_screen_vm.dart';

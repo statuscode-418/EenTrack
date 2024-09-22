@@ -5,7 +5,6 @@ import 'package:eentrack/screen/shared/date_time_picker.dart';
 import 'package:eentrack/screen/shared/show_snackbar.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 

@@ -1,4 +1,5 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:eentrack/screen/meeting_details_screen/meeting_details_screen.dart';
 import 'package:eentrack/services/dbservice/firestore_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/authbloc/auth_events.dart';
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
                   seedColor: Colors.cyan,
                   brightness: Brightness.dark,
                 )),
+        routes: {
+          '/meeting/details': (context) => const MeetingDetailsScreen(),
+        },
         home: BlocProvider(
           create: (context) =>
               AuthBloc(FirebaseAuthService.instance, FirestoreDB()),
