@@ -75,7 +75,7 @@ class MeetingsList extends StatelessWidget {
                   meeting: vm.meetings[index],
                   onTap: (meeting) {
                     Navigator.of(context).pushNamed(
-                      '/meeting_details',
+                      'meeting/details',
                       arguments: {
                         'meeting': meeting,
                         'user': vm.user,

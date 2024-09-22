@@ -38,7 +38,7 @@ class MeetingDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var vm = context.read<MeetingDetailsScreenVM>();
+    var vm = context.watch<MeetingDetailsScreenVM>();
     return Scaffold(
       appBar: AppBar(
         title: Text(vm.meeting.title),
@@ -96,15 +96,29 @@ class MeetingDetailsView extends StatelessWidget {
       ),
       body: CustomScrollView(
         slivers: <Widget>[
+          if (vm.loading)
+            const SliverToBoxAdapter(child: LinearProgressIndicator()),
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
           SliverToBoxAdapter(
             child: Wrap(
               children: [
                 ...vm.checkpoints.map(
                   (c) => GestureDetector(
                     onLongPress: () => vm.deleteCheckpoint(c),
-                    child: ChoiceChip(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: ChoiceChip(
                         label: Text(c.title),
-                        selected: vm.checkpointFilter == c),
+                        selected: vm.checkpointFilter == c,
+                        onSelected: (selected) {
+                          if (selected) {
+                            vm.toggleCheckpointFilter(c);
+                          } else {
+                            vm.toggleCheckpointFilter(null);
+                          }
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 IconButton(

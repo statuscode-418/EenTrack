@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
                   brightness: Brightness.dark,
                 )),
         routes: {
-          '/meeting/details': (context) => const MeetingDetailsScreen(),
+          'meeting/details': (context) => const MeetingDetailsScreen(),
         },
         home: BlocProvider(
           create: (context) =>

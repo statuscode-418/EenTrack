@@ -106,11 +106,11 @@ class HomeScreenVM extends AppVM {
     CheckpointModel entryCheckpoint = value['entryCheckpoint'];
     CheckpointModel exitCheckpoint = value['exitCheckpoint'];
 
-    db.createCheckPoint(entryCheckpoint);
-    db.createCheckPoint(exitCheckpoint);
+    await db.createCheckPoint(entryCheckpoint);
+    await db.createCheckPoint(exitCheckpoint);
     meeting = await db.createMeeting(user.uid, meeting);
     if (!context.mounted) return;
-    Navigator.of(context).pushNamed('/meeting/details', arguments: {
+    Navigator.of(context).pushNamed('meeting/details', arguments: {
       'user': user,
       'meeting': meeting,
       'db': db,

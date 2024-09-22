@@ -120,6 +120,7 @@ class _MeetingListViewState extends State<MeetingListView> {
                       await widget.dbModel.updateParticipant(participant);
                     }
 
+                    if (!context.mounted) return;
                     Navigator.of(context).pop();
                   } else {
                     showSnackbar(context,
@@ -150,9 +151,9 @@ class _MeetingListViewState extends State<MeetingListView> {
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(child: Text('No checkpoints available'));
               }
-    
+
               final checkpoints = snapshot.data!;
-    
+
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

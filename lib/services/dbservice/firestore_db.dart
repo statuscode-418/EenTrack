@@ -215,6 +215,9 @@ class FirestoreDB implements DBModel {
       var attendees = await getAttendeesList(uid, mid);
       var futures = attendees.map((e) => removeAttendee(uid, mid, e));
       await Future.wait(futures);
+      var checkPoints = await getCheckPoints(mid);
+      var cpFutures = checkPoints.map((e) => deleteCheckPoint(e));
+      await Future.wait(cpFutures);
       await _db.collection(db_consts.meetings).doc(mid).delete();
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');

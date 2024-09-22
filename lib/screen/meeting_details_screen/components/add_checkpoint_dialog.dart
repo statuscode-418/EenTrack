@@ -89,11 +89,9 @@ class _AddCheckpointState extends State<AddCheckpoint> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      title: const Text("Create Checkpoint"),
+      contentPadding: const EdgeInsets.all(20),
       children: [
-        const Text("Create Checkpoint"),
-        const SizedBox(
-          height: 10,
-        ),
         TextField(
           onChanged: (e) {
             name = e;
@@ -120,7 +118,7 @@ class _AddCheckpointState extends State<AddCheckpoint> {
               child: const Text("Cancel"),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: createCheckpoint,
               child: const Text("Create"),
             ),
           ],

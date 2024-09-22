@@ -37,6 +37,7 @@ class MeetingDetailsScreenVM extends AppVM {
     _checkpoints = await db.getCheckPoints(meeting.id);
     _participants = await db.getParticipants(meeting.id);
     _coHosts = await db.getUsers(meeting.coHosts);
+    safeNotify();
 
     _participantSub = db.getParticipantsStream(meeting.id).listen((event) {
       _participants = event;
@@ -48,7 +49,6 @@ class MeetingDetailsScreenVM extends AppVM {
       safeNotify();
     });
     _loading = false;
-    safeNotify();
   }
 
   List<User> _coHosts = [];
