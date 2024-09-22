@@ -144,7 +144,14 @@ class MeetingDetailsView extends StatelessWidget {
                     participant: participant,
                     checkpoints: vm.checkpoints,
                     onTap: () {
-                      // [TODO] Navigate to details screen
+                      Navigator.of(context).pushNamed(
+                        '/participant',
+                        arguments: {
+                          'participant': participant,
+                          'checkpoints': vm.checkpoints,
+                          'db': vm.db,
+                        },
+                      );
                     });
               },
               childCount: vm.participants.length,
