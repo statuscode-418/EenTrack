@@ -1,11 +1,13 @@
-import 'package:eentrack/models/attendee_model.dart';
-import 'package:eentrack/screen/meeting_details_screen/components/attendee_card.dart';
+import 'package:eentrack/models/checkpoint_model.dart';
+import 'package:eentrack/models/participant_model.dart';
+import 'package:eentrack/screen/meeting_details_screen/components/participant_card.dart';
 import 'package:flutter/material.dart';
 
 class AttendeeSearchDelegate extends SearchDelegate {
-  final List<Attendee> attendees;
+  final List<ParticipantModel> attendees;
+  final List<CheckpointModel> checkpoints;
 
-  AttendeeSearchDelegate(this.attendees);
+  AttendeeSearchDelegate(this.attendees, this.checkpoints);
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -36,7 +38,7 @@ class AttendeeSearchDelegate extends SearchDelegate {
   }
 
   Widget _buildAttendeeList(BuildContext context) {
-    final List<Attendee> filteredAttendees = query.isEmpty
+    final List<ParticipantModel> filteredAttendees = query.isEmpty
         ? attendees
         : attendees
             .where((attendee) =>
@@ -46,9 +48,15 @@ class AttendeeSearchDelegate extends SearchDelegate {
     return ListView.builder(
       itemCount: filteredAttendees.length,
       itemBuilder: (context, index) {
-        final attendee = filteredAttendees[index];
+        final participant = filteredAttendees[index];
 
-        return AttendeeCard(attendee: attendee);
+        return ParticipantCard(
+          participant: participant,
+          checkpoints: checkpoints,
+          onTap: (){
+            // [TODO] Navigate to details screen
+          }
+        );
       },
     );
   }

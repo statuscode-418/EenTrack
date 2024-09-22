@@ -78,7 +78,7 @@ class MeetingsList extends StatelessWidget {
                   onTap: (meeting) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => MeetingDetailsScreen(
+                        builder: (context) => MeetingDetailsView(
                           meeting: meeting,
                           dbprovider: vm.db,
                         ),

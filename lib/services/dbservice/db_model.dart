@@ -38,12 +38,15 @@ abstract class DBModel {
   Future<void> addParticipant(ParticipantModel participant);
   Future<void> updateParticipant(ParticipantModel participant);
   Future<void> removeParticipant(ParticipantModel participant);
-  Stream<List<ParticipantModel>> getParticipants(String mid);
+  Stream<List<ParticipantModel>> getParticipantsStream(String mid);
+  Future<List<ParticipantModel>> getParticipants(String mid);
   Future<void> markCheckPoint(String mid, String uid, String checkPointId);
   Future<void> unmarkCheckPoint(String mid, String uid, String checkPointId);
 
   Future<void> createCheckPoint(CheckpointModel checkPoint);
   Future<void> updateCheckPoint(CheckpointModel checkPoint);
   Future<void> deleteCheckPoint(CheckpointModel checkPoint);
-  Stream<List<CheckpointModel>> getCheckPoints(String mid);
+  Stream<List<CheckpointModel>> getCheckPointsStream(String mid);
+
+  Future<List<CheckpointModel>> getCheckPoints(String mid);
 }

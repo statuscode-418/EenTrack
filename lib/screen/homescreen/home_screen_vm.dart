@@ -113,7 +113,7 @@ class HomeScreenVM extends AppVM {
     if (!context.mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => MeetingDetailsScreen(
+        builder: (context) => MeetingDetailsView(
           meeting: meeting,
           dbprovider: db,
         ),

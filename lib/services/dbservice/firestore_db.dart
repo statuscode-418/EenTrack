@@ -389,7 +389,7 @@ class FirestoreDB implements DBModel {
   }
 
   @override
-  Stream<List<ParticipantModel>> getParticipants(String mid) {
+  Stream<List<ParticipantModel>> getParticipantsStream(String mid) {
     try {
       return _db
           .collection(db_consts.meetings)
@@ -401,6 +401,26 @@ class FirestoreDB implements DBModel {
             .map((doc) => ParticipantModel.fromMap(doc.data()))
             .toList();
       });
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<List<ParticipantModel>> getParticipants(String mid) async {
+    try {
+      var snapshot = await _db
+          .collection(db_consts.meetings)
+          .doc(mid)
+          .collection(db_consts.participant)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs
+            .map((doc) => ParticipantModel.fromMap(doc.data()))
+            .toList();
+      } else {
+        return [];
+      }
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');
     }
@@ -493,7 +513,7 @@ class FirestoreDB implements DBModel {
   }
 
   @override
-  Stream<List<CheckpointModel>> getCheckPoints(String mid) {
+  Stream<List<CheckpointModel>> getCheckPointsStream(String mid) {
     try {
       return _db
           .collection(db_consts.meetings)
@@ -505,6 +525,26 @@ class FirestoreDB implements DBModel {
             .map((doc) => CheckpointModel.fromMap(doc.data()))
             .toList();
       });
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
+  Future<List<CheckpointModel>> getCheckPoints(String mid) async {
+    try {
+      var snapshot = await _db
+          .collection(db_consts.meetings)
+          .doc(mid)
+          .collection(db_consts.checkPoint)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs
+            .map((doc) => CheckpointModel.fromMap(doc.data()))
+            .toList();
+      } else {
+        return [];
+      }
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');
     }
