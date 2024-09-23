@@ -1,5 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:eentrack/screen/meeting_details_screen/meeting_details_screen.dart';
+import 'package:eentrack/screen/participant_details_screen/participant_details_screen.dart';
+import 'package:eentrack/screen/scanning_screen/scanning_screen.dart';
 import 'package:eentrack/services/dbservice/firestore_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/authbloc/auth_events.dart';
@@ -36,7 +38,9 @@ class MyApp extends StatelessWidget {
                   brightness: Brightness.dark,
                 )),
         routes: {
-          'meeting/details': (context) => const MeetingDetailsScreen(),
+          '/meeting/details': (context) => const MeetingDetailsScreen(),
+          '/scan': (context) => const ScanningScreen(),
+          '/meeting/participant': (context) => const ParticipantDetailsScreen(),
         },
         home: BlocProvider(
           create: (context) =>

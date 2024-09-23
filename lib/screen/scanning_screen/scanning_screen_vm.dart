@@ -12,7 +12,7 @@ class ScanningScreenVm extends AppVM {
   final DBModel db;
   final Meeting meeting;
   final MobileScannerController scannerController = MobileScannerController();
-  late CheckpointModel? _selectedCheckPoint;
+  CheckpointModel? _selectedCheckPoint;
 
   bool ready = true;
   ScanningScreenVm(super.context, {required this.db, required this.meeting}) {

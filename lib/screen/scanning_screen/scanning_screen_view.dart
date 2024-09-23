@@ -14,52 +14,70 @@ class ScanningScreenView extends StatelessWidget {
       appBar: AppBar(
         title: Text(vm.meeting.title),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: MobileScanner(
-              controller: vm.scannerController,
-              onDetect: vm.onDetectBarcode,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            children: vm.checkPoints
-                .map(
-                  (e) => ChoiceChip(
-                    label: Text(e.title),
-                    selected: vm.selectedCheckPoint == e,
-                    onSelected: (selected) {
-                      if (selected) {
-                        vm.onCheckPointSelected(e);
-                      } else {
-                        vm.onCheckPointSelected(null);
-                      }
-                    },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal:  16.0),
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2,
                   ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, i) => ParticipantCard(
-                participant: vm.participants[i],
-                checkpoints: vm.checkPoints,
-                onTap: () {
-                  Navigator.of(context).pushNamed(
-                    '/participant',
-                    arguments: {
-                      'participant': vm.participants[i],
-                      'checkpoints': vm.checkPoints,
-                      'db': vm.db,
-                    },
-                  );
-                },
+                ),
+                child: MobileScanner(
+                  controller: vm.scannerController,
+                  onDetect: vm.onDetectBarcode,
+                ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Wrap(
+              children: vm.checkPoints
+                  .map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ChoiceChip(
+                        label: Text(e.title),
+                        selected: vm.selectedCheckPoint == e,
+                        onSelected: (selected) {
+                          if (selected) {
+                            vm.onCheckPointSelected(e);
+                          } else {
+                            vm.onCheckPointSelected(null);
+                          }
+                        },
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: vm.participants.length,
+                itemBuilder: (context, i) => ParticipantCard(
+                  participant: vm.participants[i],
+                  checkpoints: vm.checkPoints,
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      '/participant',
+                      arguments: {
+                        'participant': vm.participants[i],
+                        'checkpoints': vm.checkPoints,
+                        'db': vm.db,
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
