@@ -138,7 +138,7 @@ class _UploadMeetingDetailsScreenState
 
       for (int j = 0; j < row.length; j++) {
         if (j != nameIndex && j != userIdIndex) {
-          data[excelHeaders[j]] = row[j];
+          data[excelHeaders[j]] = row[j].value.toString();
         }
       }
 

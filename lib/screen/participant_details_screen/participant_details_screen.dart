@@ -2,6 +2,7 @@ import 'package:eentrack/models/checkpoint_model.dart';
 import 'package:eentrack/models/participant_model.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ParticipantDetailsScreen extends StatefulWidget {
   const ParticipantDetailsScreen({super.key});
@@ -16,79 +17,89 @@ class _ParticipantDetailsScreenState extends State<ParticipantDetailsScreen> {
   late List<CheckpointModel> checkPoints;
   late bool popOnChecked;
   late DBModel db;
+  final dateFormat = DateFormat('hh:mm:ss a, dd-MM-yyyy');
+
+  bool init = false;
 
   @override
   void initState() {
     super.initState();
-    var args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    participant = args['participant'] as ParticipantModel;
-    checkPoints = args['checkpoints'] as List<CheckpointModel>;
-    popOnChecked = args['pop_on_checked'] as bool? ?? false;
-    db = args['db'] as DBModel;
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!init) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map;
+      participant = args['participant'];
+      checkPoints = args['checkpoints'];
+      popOnChecked = args['popOnChecked'] ?? false;
+      db = args['db'];
+      init = true;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(participant.name),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
             child: ListView(
-              children: participant.data.entries
-                  .map(
-                    (e) => ListTile(
-                      title: Text(e.key),
-                      subtitle: Text(e.value.toString()),
-                    ),
-                  )
-                  .toList(),
+              children: [
+                ...participant.data.entries.map(
+                  (e) => ParticipantDetailsTile(
+                    title: e.key,
+                    value: e.value,
+                  ),
+                ),
+                ...participant.checkPoints.entries.map(
+                  (e) => ParticipantDetailsTile(
+                    title: checkPoints
+                        .firstWhere((element) => element.id == e.key)
+                        .title,
+                    value: dateFormat.format(e.value),
+                  ),
+                ),
+              ],
             ),
           ),
           Wrap(
             children: checkPoints
                 .map(
-                  (e) => CheckpointChip(
-                    title: e.title,
-                    isChecked: participant.isChecked(e.id),
-                    onTap: () async {
-                      if (participant.isChecked(e.id)) {
-                        participant.unmarkCheckPoint(e.id);
-                        await db.markCheckPoint(
-                          participant.eventId,
-                          participant.userId,
-                          e.id,
-                        );
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                '${participant.name} | ${e.title} unchechecked'),
-                          ),
-                        );
-                      } else {
-                        participant.markCheckPoint(e.id);
-                        await db.unmarkCheckPoint(
-                          participant.eventId,
-                          participant.userId,
-                          e.id,
-                        );
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                '${participant.name} | ${e.title} chechecked'),
-                          ),
-                        );
-                      }
-                      if (popOnChecked) {
-                        Navigator.of(context).pop();
-                      }
-                      setState(() {});
-                    },
+                  (e) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CheckpointChip(
+                      title: e.title,
+                      isChecked: participant.isChecked(e.id),
+                      onTap: () async {
+                        if (participant.isChecked(e.id)) {
+                          participant.unmarkCheckPoint(e.id);
+                          await db.updateParticipant(participant);
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  '${participant.name} | ${e.title} unchechecked'),
+                            ),
+                          );
+                        } else {
+                          participant.markCheckPoint(e.id);
+                          await db.updateParticipant(participant);
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  '${participant.name} | ${e.title} chechecked'),
+                            ),
+                          );
+                        }
+                        if (popOnChecked) {
+                          Navigator.of(context).pop();
+                        }
+                        setState(() {});
+                      },
+                    ),
                   ),
                 )
                 .toList(),
@@ -121,6 +132,25 @@ class CheckpointChip extends StatelessWidget {
           color: isChecked ? Colors.green : Colors.red,
         ),
       ),
+    );
+  }
+}
+
+class ParticipantDetailsTile extends StatelessWidget {
+  final String title;
+  final dynamic value;
+
+  const ParticipantDetailsTile({
+    super.key,
+    required this.title,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(value),
     );
   }
 }

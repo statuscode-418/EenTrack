@@ -147,7 +147,7 @@ class MeetingDetailsView extends StatelessWidget {
                       checkpoints: vm.checkpoints,
                       onTap: () {
                         Navigator.of(context).pushNamed(
-                          '/participant',
+                          '/meeting/participant',
                           arguments: {
                             'participant': participant,
                             'checkpoints': vm.checkpoints,

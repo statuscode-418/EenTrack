@@ -7,12 +7,12 @@ class CustomTextWidget extends StatelessWidget {
   final Widget? trailing;
 
   const CustomTextWidget({
-    Key? key,
+    super.key,
     required this.text,
     this.labelColor,
     this.containerColor,
     this.trailing,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

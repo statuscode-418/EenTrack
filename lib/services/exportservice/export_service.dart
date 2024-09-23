@@ -20,12 +20,12 @@ class ExportService implements ExportModel {
       var d = data[0].exportData(
         fields: fields,
       );
-      sheet.appendRow(d.keys.toList());
+      sheet.appendRow(d.keys.map((e) => TextCellValue(e)).toList());
       for (var d in data) {
         var map = d.exportData(
           fields: fields,
         );
-        sheet.appendRow(map.values.toList());
+        sheet.appendRow(map.values.map((e) => TextCellValue(e)).toList());
       }
     }
 

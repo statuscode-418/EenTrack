@@ -472,7 +472,9 @@ class FirestoreDB implements DBModel {
           .doc(participant.eventId)
           .collection(db_consts.participant)
           .doc(participant.userId)
-          .update(participant.toMap());
+          .set(
+            participant.toMap(),
+          );
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');
     }
@@ -482,12 +484,13 @@ class FirestoreDB implements DBModel {
   Future<void> markCheckPoint(
       String mid, String uid, String checkPointId) async {
     try {
+      var time = DateTime.now().toIso8601String();
       await _db
           .collection(db_consts.meetings)
           .doc(mid)
           .collection(db_consts.participant)
           .doc(uid)
-          .update({checkPointId: true});
+          .update({checkPointId: time});
     } on FirebaseException catch (e) {
       throw DBException(e.message ?? 'Unknown error');
     }

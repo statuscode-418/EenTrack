@@ -46,12 +46,9 @@ class AuthStateNeedLogin extends AuthState with EquatableMixin {
   AuthStateNeedLogin({
     this.email = '',
     this.password = '',
-    String? loading,
-    String? error,
-  }) : super(
-          loading: loading,
-          error: error,
-        );
+    super.loading,
+    super.error,
+  });
   @override
   List<Object?> get props => [error, loading];
 
@@ -75,12 +72,9 @@ class AuthStateNeedRegister extends AuthState with EquatableMixin {
   AuthStateNeedRegister({
     this.email = '',
     this.password = '',
-    String? loading,
-    String? error,
-  }) : super(
-          loading: loading,
-          error: error,
-        );
+    super.loading,
+    super.error,
+  });
   @override
   List<Object?> get props => [error, loading];
 }
@@ -89,12 +83,9 @@ class AuthStateNeedVerify extends AuthState with EquatableMixin {
   final String email;
   AuthStateNeedVerify({
     required this.email,
-    String? loading,
-    String? error,
-  }) : super(
-          loading: loading,
-          error: error,
-        );
+    super.loading,
+    super.error,
+  });
   @override
   List<Object?> get props => [error, loading];
 }
@@ -105,12 +96,9 @@ class AuthStateShowUserDetailsForm extends AuthState {
   const AuthStateShowUserDetailsForm({
     required this.user,
     required this.onSubmit,
-    String? loading,
-    String? error,
-  }) : super(
-          loading: loading,
-          error: error,
-        );
+    super.loading,
+    super.error,
+  });
 
   @override
   AuthStateShowUserDetailsForm copyWith({

@@ -190,7 +190,8 @@ class _MeetingListViewState extends State<MeetingListView> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final participant = filteredAttendees[index];
-                final participantCheckpoints = participant.checkPoints;
+                final participantCheckpoints =
+                    participant.checkPoints.keys.toList();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
