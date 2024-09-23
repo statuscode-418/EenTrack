@@ -31,7 +31,6 @@ class ScanningScreenView extends StatelessWidget {
                 ),
                 child: MobileScanner(
                   controller: vm.scannerController,
-                  onDetect: vm.onDetectBarcode,
                 ),
               ),
             ),

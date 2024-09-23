@@ -2,6 +2,8 @@ class ParticipantModel {
   final String eventId;
   final String userId;
   final String name;
+  DateTime lastUpdated;
+  final DateTime created;
 
   final Map<String, dynamic> data;
   final Map<String, DateTime> checkPoints;
@@ -11,6 +13,8 @@ class ParticipantModel {
     required this.userId,
     required this.name,
     required this.data,
+    required this.lastUpdated,
+    required this.created,
     this.checkPoints = const <String, DateTime>{},
   });
 
@@ -28,6 +32,8 @@ class ParticipantModel {
       'userId': userId,
       'checkPoints': checkPointsList,
       'name': name,
+      'lastUpdated': lastUpdated.toIso8601String(),
+      'created': created.toIso8601String(),
       ...data,
       ...checkPointsMap,
     };
@@ -39,11 +45,15 @@ class ParticipantModel {
     final eventId = map['eventId'];
     final userId = map['userId'];
     final name = map['name'];
+    final lastUpdated = DateTime.parse(map['lastUpdated']);
+    final created = DateTime.parse(map['created']);
 
     map
       ..remove('eventId')
       ..remove('userId')
-      ..remove('name');
+      ..remove('name')
+      ..remove('lastUpdated')
+      ..remove('created');
 
     final checkPoints = List<String>.from(map['checkPoints']);
     map.remove('checkPoints');
@@ -57,6 +67,8 @@ class ParticipantModel {
     return ParticipantModel(
         eventId: eventId,
         userId: userId,
+        created: created,
+        lastUpdated: lastUpdated,
         name: name,
         data: map,
         checkPoints: checkPointsMap);
@@ -68,10 +80,12 @@ class ParticipantModel {
 
   void markCheckPoint(String checkPointId) {
     checkPoints[checkPointId] = DateTime.now();
+    lastUpdated = DateTime.now();
   }
 
   void unmarkCheckPoint(String checkPointId) {
     checkPoints.remove(checkPointId);
+    lastUpdated = DateTime.now();
   }
 
   bool isChecked(String checkPointId) {

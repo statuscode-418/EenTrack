@@ -32,7 +32,7 @@ class _ParticipantDetailsScreenState extends State<ParticipantDetailsScreen> {
       final args = ModalRoute.of(context)!.settings.arguments as Map;
       participant = args['participant'];
       checkPoints = args['checkpoints'];
-      popOnChecked = args['popOnChecked'] ?? false;
+      popOnChecked = args['pop_on_checked'] ?? false;
       db = args['db'];
       init = true;
     }
@@ -53,14 +53,12 @@ class _ParticipantDetailsScreenState extends State<ParticipantDetailsScreen> {
                     value: e.value,
                   ),
                 ),
-                ...participant.checkPoints.entries.map(
-                  (e) => ParticipantDetailsTile(
-                    title: checkPoints
-                        .firstWhere((element) => element.id == e.key)
-                        .title,
-                    value: dateFormat.format(e.value),
-                  ),
-                ),
+                ...checkPoints.where((e) => participant.isChecked(e.id)).map(
+                      (e) => ParticipantDetailsTile(
+                        title: e.title,
+                        value: dateFormat.format(participant.checkPoints[e.id]!),
+                      ),
+                    ),
               ],
             ),
           ),

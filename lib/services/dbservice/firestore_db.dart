@@ -419,6 +419,7 @@ class FirestoreDB implements DBModel {
           .collection(db_consts.meetings)
           .doc(mid)
           .collection(db_consts.participant)
+          .orderBy('lastUpdated', descending: true)
           .snapshots()
           .map((snapshot) {
         return snapshot.docs
@@ -437,6 +438,7 @@ class FirestoreDB implements DBModel {
           .collection(db_consts.meetings)
           .doc(mid)
           .collection(db_consts.participant)
+          .orderBy('lastUpdated', descending: true)
           .get();
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs
@@ -546,6 +548,7 @@ class FirestoreDB implements DBModel {
           .collection(db_consts.meetings)
           .doc(mid)
           .collection(db_consts.checkPoint)
+          .orderBy(model_consts.time)
           .snapshots()
           .map((snapshot) {
         return snapshot.docs
@@ -564,6 +567,7 @@ class FirestoreDB implements DBModel {
           .collection(db_consts.meetings)
           .doc(mid)
           .collection(db_consts.checkPoint)
+          .orderBy(model_consts.time)
           .get();
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs

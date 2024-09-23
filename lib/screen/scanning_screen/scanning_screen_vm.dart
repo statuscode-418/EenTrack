@@ -8,7 +8,7 @@ import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class ScanningScreenVm extends AppVM {
+class ScanningScreenVm extends AppVM with WidgetsBindingObserver {
   final DBModel db;
   final Meeting meeting;
   final MobileScannerController scannerController = MobileScannerController();
@@ -16,6 +16,13 @@ class ScanningScreenVm extends AppVM {
 
   bool ready = true;
   ScanningScreenVm(super.context, {required this.db, required this.meeting}) {
+    WidgetsBinding.instance.addObserver(this);
+
+    // Start listening to the barcode events.
+    scannerSubcription = scannerController.barcodes.listen(onDetectBarcode);
+
+    // Finally, start the scanner itself.
+    unawaited(scannerController.start());
     init();
   }
 
@@ -42,6 +49,36 @@ class ScanningScreenVm extends AppVM {
     }
     _selectedCheckPoint ??= _checkPoints.firstOrNull;
     safeNotify();
+  }
+
+  StreamSubscription? scannerSubcription;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // If the controller is not ready, do not try to start or stop it.
+    // Permission dialogs can trigger lifecycle changes before the controller is ready.
+    if (!scannerController.value.isInitialized) {
+      return;
+    }
+
+    switch (state) {
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+        return;
+      case AppLifecycleState.resumed:
+        // Restart the scanner when the app is resumed.
+        // Don't forget to resume listening to the barcode events.
+        scannerSubcription = scannerController.barcodes.listen(onDetectBarcode);
+
+        unawaited(scannerController.start());
+      case AppLifecycleState.inactive:
+        // Stop the scanner when the app is paused.
+        // Also stop the barcode events subscription.
+        unawaited(scannerSubcription?.cancel());
+        scannerSubcription = null;
+        unawaited(scannerController.stop());
+    }
   }
 
   CheckpointModel? get selectedCheckPoint => _selectedCheckPoint;
@@ -72,7 +109,7 @@ class ScanningScreenVm extends AppVM {
     for (var participant in _participants) {
       if (participant.userId == participantId) {
         await Navigator.of(context).pushNamed(
-          '/participant_details',
+          '/meeting/participant',
           arguments: {
             'participant': participant,
             'checkpoints': _checkPoints,
@@ -97,9 +134,13 @@ class ScanningScreenVm extends AppVM {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // Stop listening to the barcode events.
+    unawaited(scannerSubcription?.cancel());
+    scannerSubcription = null;
     _participantsSubscription?.cancel();
     _checkPointsSubscription?.cancel();
-    scannerController.dispose();
     super.dispose();
+    scannerController.dispose();
   }
 }

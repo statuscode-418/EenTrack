@@ -141,12 +141,15 @@ class _UploadMeetingDetailsScreenState
           data[excelHeaders[j]] = row[j].value.toString();
         }
       }
+      final time = DateTime.now();
 
       final participant = ParticipantModel(
         eventId: widget.meetingId,
         userId: userId,
         name: name,
         data: data,
+        created: time,
+        lastUpdated: time,
       );
       widget.dbProvider.addParticipant(participant);
     }
