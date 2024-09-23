@@ -164,8 +164,10 @@ class MeetingDetailsView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed('/scan',
-              arguments: {'meeting': vm.meeting, 'db': vm.db});
+          Navigator.of(context).pushNamed(
+            '/scan',
+            arguments: {'meeting': vm.meeting, 'db': vm.db},
+          );
         },
         child: const Icon(Icons.qr_code_scanner),
       ),

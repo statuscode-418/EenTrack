@@ -15,9 +15,9 @@ class ScanningScreenView extends StatelessWidget {
         title: Text(vm.meeting.title),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal:  16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: Container(
