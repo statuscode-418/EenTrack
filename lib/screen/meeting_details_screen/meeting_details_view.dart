@@ -55,7 +55,7 @@ class MeetingDetailsView extends StatelessWidget {
                 );
               },
               icon: const Icon(
-                Icons.upload,
+                Icons.upload_file,
               )),
           IconButton(
             onPressed: () => showSearch(
@@ -94,70 +94,73 @@ class MeetingDetailsView extends StatelessWidget {
             ),
         ],
       ),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          if (vm.loading)
-            const SliverToBoxAdapter(child: LinearProgressIndicator()),
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverToBoxAdapter(
-            child: Wrap(
-              children: [
-                ...vm.checkpoints.map(
-                  (c) => GestureDetector(
-                    onLongPress: () => vm.deleteCheckpoint(c),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: ChoiceChip(
-                        label: Text(c.title),
-                        selected: vm.checkpointFilter == c,
-                        onSelected: (selected) {
-                          if (selected) {
-                            vm.toggleCheckpointFilter(c);
-                          } else {
-                            vm.toggleCheckpointFilter(null);
-                          }
-                        },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            if (vm.loading)
+              const SliverToBoxAdapter(child: LinearProgressIndicator()),
+            const SliverToBoxAdapter(child: SizedBox(height: 10)),
+            SliverToBoxAdapter(
+              child: Wrap(
+                children: [
+                  ...vm.checkpoints.map(
+                    (c) => GestureDetector(
+                      onLongPress: () => vm.deleteCheckpoint(c),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: ChoiceChip(
+                          label: Text(c.title),
+                          selected: vm.checkpointFilter == c,
+                          onSelected: (selected) {
+                            if (selected) {
+                              vm.toggleCheckpointFilter(c);
+                            } else {
+                              vm.toggleCheckpointFilter(null);
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                    onPressed: vm.createCheckpoint,
-                    icon: const Icon(Icons.add)),
-              ],
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Total: ${vm.participants.length}",
-                style: Theme.of(context).textTheme.headlineSmall,
+                  IconButton(
+                      onPressed: vm.createCheckpoint,
+                      icon: const Icon(Icons.add)),
+                ],
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final participant = vm.participants[index];
-                return ParticipantCard(
-                    participant: participant,
-                    checkpoints: vm.checkpoints,
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                        '/participant',
-                        arguments: {
-                          'participant': participant,
-                          'checkpoints': vm.checkpoints,
-                          'db': vm.db,
-                        },
-                      );
-                    });
-              },
-              childCount: vm.participants.length,
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Total: ${vm.participants.length}",
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
             ),
-          )
-        ],
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final participant = vm.participants[index];
+                  return ParticipantCard(
+                      participant: participant,
+                      checkpoints: vm.checkpoints,
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          '/participant',
+                          arguments: {
+                            'participant': participant,
+                            'checkpoints': vm.checkpoints,
+                            'db': vm.db,
+                          },
+                        );
+                      });
+                },
+                childCount: vm.participants.length,
+              ),
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},

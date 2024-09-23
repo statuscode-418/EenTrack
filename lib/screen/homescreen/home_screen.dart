@@ -71,7 +71,7 @@ class HomeScreenConsumer extends StatelessWidget {
       ),
       body: PageView(
         controller: vm.homePageController,
-        physics: const NeverScrollableScrollPhysics(),
+        // physics: const NeverScrollableScrollPhysics(),
         children: const [
           DetailsQrView(),
           ProfileView(),

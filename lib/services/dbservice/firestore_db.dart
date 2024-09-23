@@ -392,6 +392,27 @@ class FirestoreDB implements DBModel {
   }
 
   @override
+  Future<ParticipantModel?> getParticipant(String mid, String pid) {
+    try {
+      return _db
+          .collection(db_consts.meetings)
+          .doc(mid)
+          .collection(db_consts.participant)
+          .doc(pid)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          return ParticipantModel.fromMap(doc.data()!);
+        } else {
+          return null;
+        }
+      });
+    } on FirebaseException catch (e) {
+      throw DBException(e.message ?? 'Unknown error');
+    }
+  }
+
+  @override
   Stream<List<ParticipantModel>> getParticipantsStream(String mid) {
     try {
       return _db

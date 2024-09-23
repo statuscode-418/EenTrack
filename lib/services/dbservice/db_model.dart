@@ -38,6 +38,7 @@ abstract class DBModel {
   Future<void> addParticipant(ParticipantModel participant);
   Future<void> updateParticipant(ParticipantModel participant);
   Future<void> removeParticipant(ParticipantModel participant);
+  Future<ParticipantModel?> getParticipant(String mid, String pid);
   Stream<List<ParticipantModel>> getParticipantsStream(String mid);
   Future<List<ParticipantModel>> getParticipants(String mid);
   Future<void> markCheckPoint(String mid, String uid, String checkPointId);

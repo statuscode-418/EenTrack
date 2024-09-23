@@ -39,6 +39,10 @@ class HomeScreenVM extends AppVM {
     required this.db,
   }) {
     init();
+    homePageController.addListener(() {
+      pageNo = homePageController.page?.round() ?? 1;
+      safeNotify();
+    });
   }
 
   bool get isInitialized => _isInitialized;
@@ -63,6 +67,7 @@ class HomeScreenVM extends AppVM {
   void dispose() {
     _meetingSubscription?.cancel();
     _cohostedMeetingSubscription?.cancel();
+    homePageController.dispose();
     super.dispose();
   }
 
