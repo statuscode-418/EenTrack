@@ -94,7 +94,7 @@ class MeetingDetailsView extends StatelessWidget {
                     vm.shareDetails();
                     break;
                   case PopupMenu.cohost:
-                    vm.addCohost();
+                    vm.manageCoHosts();
                     break;
                   case PopupMenu.delete:
                     vm.deleteMeeting();

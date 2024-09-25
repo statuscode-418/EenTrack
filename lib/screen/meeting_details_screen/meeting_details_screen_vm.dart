@@ -8,6 +8,7 @@ import 'package:eentrack/models/user_model.dart';
 import 'package:eentrack/screen/dialog/alart_dialog.dart';
 import 'package:eentrack/screen/dialog/scanner_dialog.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/add_checkpoint_dialog.dart';
+import 'package:eentrack/screen/meeting_details_screen/components/co_host_manager.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
 import 'package:eentrack/services/qr_service/qr_parser.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +128,13 @@ class MeetingDetailsScreenVM extends AppVM {
     await db.deleteMeeting(user.uid, meeting.id);
     if (!context.mounted) return;
     Navigator.of(context).pop();
+  }
+
+  Future<void> manageCoHosts() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => CoHostManager(vm: this),
+    );
   }
 
   @override

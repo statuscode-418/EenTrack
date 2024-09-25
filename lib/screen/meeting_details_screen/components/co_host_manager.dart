@@ -26,7 +26,7 @@ class _CoHostManagerState extends State<CoHostManager> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         children: [
           const SizedBox(
@@ -34,27 +34,38 @@ class _CoHostManagerState extends State<CoHostManager> {
           ),
           Row(
             children: [
-              const Expanded(child: Text("Manage Co-Hosts")),
+              const Expanded(
+                child: Text(
+                  "Manage Co-Hosts",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold, 
+                  ),
+                ),
+              ),
               IconButton(
                 onPressed: widget.vm.addCohost,
                 icon: const Icon(Icons.add),
               )
             ],
           ),
-          const SizedBox(
+          const Divider(
             height: 20,
           ),
           Expanded(
-            child: ListView.builder(itemBuilder: (context, i) {
-              var coHost = widget.vm.coHosts[i];
-              return ListTile(
-                title: Text(coHost.name),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => widget.vm.removeCohost(coHost),
-                ),
-              );
-            }),
+            child: ListView.builder(
+              itemBuilder: (context, i) {
+                var coHost = widget.vm.coHosts[i];
+                return ListTile(
+                  title: Text(coHost.name),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => widget.vm.removeCohost(coHost),
+                  ),
+                );
+              },
+              itemCount: widget.vm.coHosts.length,
+            ),
           )
         ],
       ),
