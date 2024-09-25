@@ -22,9 +22,12 @@ class ParticipantCard extends StatelessWidget {
         subtitle: Wrap(
           children: checkpoints
               .map(
-                (e) => CheckpointMark(
-                  title: e.title,
-                  isChecked: participant.isChecked(e.id),
+                (e) => Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: CheckpointMark(
+                    title: e.title,
+                    isChecked: participant.isChecked(e.id),
+                  ),
                 ),
               )
               .toList(),
@@ -45,17 +48,15 @@ class CheckpointMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(title),
-          const SizedBox(width: 4),
-          isChecked
-              ? const Icon(Icons.check, color: Colors.green)
-              : const Icon(Icons.close, color: Colors.red),
-        ],
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(title),
+        const SizedBox(width: 4),
+        isChecked
+            ? const Icon(Icons.check, color: Colors.green)
+            : const Icon(Icons.close, color: Colors.red),
+      ],
     );
   }
 }

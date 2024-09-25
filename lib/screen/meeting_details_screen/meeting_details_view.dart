@@ -1,5 +1,5 @@
-import 'package:eentrack/screen/meeting_details_screen/components/attendee_search_delegate.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/participant_card.dart';
+import 'package:eentrack/screen/meeting_details_screen/components/participant_search_delegate.dart';
 import 'package:eentrack/screen/meeting_details_screen/meeting_details_screen_vm.dart';
 import 'package:eentrack/screen/upload_meeting_details/upload_meeting_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +60,17 @@ class MeetingDetailsView extends StatelessWidget {
           IconButton(
             onPressed: () => showSearch(
               context: context,
-              delegate: AttendeeSearchDelegate(vm.participants, vm.checkpoints),
+              delegate: ParticipantSearchDelegate(
+                  vm.participants, vm.checkpoints, (p) {
+                Navigator.of(context).pushNamed(
+                  '/meeting/participant',
+                  arguments: {
+                    'participant': p,
+                    'checkpoints': vm.checkpoints,
+                    'db': vm.db,
+                  },
+                );
+              }),
             ),
             icon: const Icon(Icons.search),
           ),

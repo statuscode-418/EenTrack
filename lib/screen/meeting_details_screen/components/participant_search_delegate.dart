@@ -3,11 +3,16 @@ import 'package:eentrack/models/participant_model.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/participant_card.dart';
 import 'package:flutter/material.dart';
 
-class AttendeeSearchDelegate extends SearchDelegate {
+class ParticipantSearchDelegate extends SearchDelegate {
   final List<ParticipantModel> attendees;
   final List<CheckpointModel> checkpoints;
+  final Function(ParticipantModel) onParticipantTap;
 
-  AttendeeSearchDelegate(this.attendees, this.checkpoints);
+  ParticipantSearchDelegate(
+    this.attendees,
+    this.checkpoints,
+    this.onParticipantTap,
+  );
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -53,9 +58,7 @@ class AttendeeSearchDelegate extends SearchDelegate {
         return ParticipantCard(
           participant: participant,
           checkpoints: checkpoints,
-          onTap: (){
-            // [TODO] Navigate to details screen
-          }
+          onTap: () => onParticipantTap(participant),
         );
       },
     );
