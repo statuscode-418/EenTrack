@@ -11,11 +11,11 @@ extension PopupMenuExtension on PopupMenu {
   String get value {
     switch (this) {
       case PopupMenu.export:
-        return 'export';
+        return 'Export';
       case PopupMenu.cohost:
-        return 'cohost';
+        return 'Cohost';
       case PopupMenu.delete:
-        return 'delete';
+        return 'Delete';
     }
   }
 

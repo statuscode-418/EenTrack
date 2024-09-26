@@ -1,8 +1,4 @@
-import 'package:eentrack/models/export_fields.dart';
-
-import 'model.dart';
-
-class User implements DataModel {
+class User {
   final String uid;
   String name;
   String? photoUrl;
@@ -60,8 +56,7 @@ class User implements DataModel {
     );
   }
 
-  @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'uid': uid,
       'name': name,
@@ -87,10 +82,5 @@ class User implements DataModel {
       linkedin: map['linkedin'],
       github: map['github'],
     );
-  }
-
-  @override
-  Map<String, dynamic> exportData({List<ExportField> fields = const []}) {
-    throw UnimplementedError();
   }
 }

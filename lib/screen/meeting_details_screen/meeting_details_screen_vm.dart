@@ -9,7 +9,9 @@ import 'package:eentrack/screen/dialog/alart_dialog.dart';
 import 'package:eentrack/screen/dialog/scanner_dialog.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/add_checkpoint_dialog.dart';
 import 'package:eentrack/screen/meeting_details_screen/components/co_host_manager.dart';
+import 'package:eentrack/screen/meeting_details_screen/components/share_sheet.dart';
 import 'package:eentrack/services/dbservice/db_model.dart';
+import 'package:eentrack/services/exportservice/export_service.dart';
 import 'package:eentrack/services/qr_service/qr_parser.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +19,7 @@ class MeetingDetailsScreenVM extends AppVM {
   Meeting meeting;
   User user;
   DBModel db;
+  ExportService exportService = ExportService();
 
   MeetingDetailsScreenVM(
     super.context, {
@@ -118,7 +121,15 @@ class MeetingDetailsScreenVM extends AppVM {
   }
 
   Future<void> shareDetails() async {
-    // [TODO] Impliment share with new participants model
+    if (loading) return;
+    var filename = meeting.title;
+    await openShareSheet(
+      context,
+      onExcelTapped: () =>
+          exportService.toExcel(filename, participants, checkpoints),
+      onCSVTapped: () =>
+          exportService.toCSV(filename, participants, checkpoints),
+    );
   }
 
   void deleteMeeting() async {

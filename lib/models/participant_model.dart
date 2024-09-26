@@ -18,7 +18,7 @@ class ParticipantModel {
     this.checkPoints = const <String, DateTime>{},
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     var checkPointsList = checkPoints.keys.toList();
     var checkPointsMap = <String, String>{};
     for (var key in checkPoints.keys) {
@@ -90,5 +90,9 @@ class ParticipantModel {
 
   bool isChecked(String checkPointId) {
     return checkPoints.containsKey(checkPointId);
+  }
+
+  DateTime? getCheckPointTime(String checkPointId) {
+    return checkPoints[checkPointId];
   }
 }

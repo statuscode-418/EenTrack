@@ -1,9 +1,6 @@
-import 'package:eentrack/models/export_fields.dart';
-
-import 'model.dart';
 import 'model_consts.dart' as consts;
 
-class Meeting implements DataModel {
+class Meeting {
   final String id;
   final String hostid;
   final bool isHost;
@@ -40,8 +37,7 @@ class Meeting implements DataModel {
     );
   }
 
-  @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       consts.id: id,
       consts.hostid: hostid,
@@ -71,10 +67,4 @@ class Meeting implements DataModel {
   })  : coHosts = [],
         isHost = true,
         date = DateTime.now();
-
-  @override
-  Map<String, dynamic> exportData({List<ExportField> fields = const []}) {
-    // TODO: implement exportData
-    throw UnimplementedError();
-  }
 }
