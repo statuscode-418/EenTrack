@@ -17,7 +17,7 @@ class _ParticipantDetailsScreenState extends State<ParticipantDetailsScreen> {
   late List<CheckpointModel> checkPoints;
   late bool popOnChecked;
   late DBModel db;
-  final dateFormat = DateFormat('hh:mm:ss a, dd-MM-yyyy');
+  final dateFormat = DateFormat('dd MMMM yyyy, hh:mm a');
 
   bool init = false;
 
@@ -43,7 +43,7 @@ class _ParticipantDetailsScreenState extends State<ParticipantDetailsScreen> {
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        children: [          
           Expanded(
             child: ListView(
               children: [
@@ -62,45 +62,50 @@ class _ParticipantDetailsScreenState extends State<ParticipantDetailsScreen> {
               ],
             ),
           ),
-          Wrap(
-            children: checkPoints
-                .map(
-                  (e) => Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CheckpointChip(
-                      title: e.title,
-                      isChecked: participant.isChecked(e.id),
-                      onTap: () async {
-                        if (participant.isChecked(e.id)) {
-                          participant.unmarkCheckPoint(e.id);
-                          await db.updateParticipant(participant);
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  '${participant.name} | ${e.title} unchechecked'),
-                            ),
-                          );
-                        } else {
-                          participant.markCheckPoint(e.id);
-                          await db.updateParticipant(participant);
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  '${participant.name} | ${e.title} chechecked'),
-                            ),
-                          );
-                        }
-                        if (popOnChecked) {
-                          Navigator.of(context).pop();
-                        }
-                        setState(() {});
-                      },
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0, left: 10),
+            child: Wrap(
+              children: checkPoints
+                  .map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CheckpointChip(
+                        title: e.title,
+                        isChecked: participant.isChecked(e.id),
+                        onTap: () async {
+                          if (participant.isChecked(e.id)) {
+                            participant.unmarkCheckPoint(e.id);
+                            await db.updateParticipant(participant);
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    '${participant.name} | ${e.title} unchecked'),
+                                duration: const Duration(milliseconds: 500),
+                              ),
+                            );
+                          } else {
+                            participant.markCheckPoint(e.id);
+                            await db.updateParticipant(participant);
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    '${participant.name} | ${e.title} checked'),
+                                    duration: const Duration(milliseconds: 500),
+                              ),
+                            );
+                          }
+                          if (popOnChecked) {
+                            Navigator.of(context).pop();
+                          }
+                          setState(() {});
+                        },
+                      ),
                     ),
-                  ),
-                )
-                .toList(),
+                  )
+                  .toList(),
+            ),
           ),
         ],
       ),
@@ -146,9 +151,43 @@ class ParticipantDetailsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color titleColor = Colors.cyan;
+    Color subtitleColor = const Color.fromARGB(255, 255, 255, 255);
+
+    if (title.toLowerCase() == 'dietary preference') {
+      if (value.toString().toLowerCase() == 'veg') {
+        subtitleColor = Colors.green;
+      } else if (value.toString().toLowerCase() == 'non-veg') {
+        subtitleColor = Colors.red;
+      }
+    }
+    if (title.toLowerCase() == 'role') {
+      if (value.toString().toLowerCase() == 'attendee') {
+        subtitleColor = Colors.orange;
+      } else if (value.toString().toLowerCase() == 'volunteer') {
+        subtitleColor = Colors.yellow;
+      }
+    }
+    if (title.toLowerCase() == 'sex') {
+      if (value.toString().toLowerCase() == 'male') {
+        subtitleColor = Colors.blue;
+      } else if (value.toString().toLowerCase() == 'female') {
+        subtitleColor = const Color.fromARGB(255, 230, 22, 164);
+      }
+    }
     return ListTile(
-      title: Text(title),
-      subtitle: Text(value),
+      title: Text(title,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: titleColor,
+          )),
+      subtitle: Text(value,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: subtitleColor,
+          )),
     );
   }
 }

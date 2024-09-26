@@ -100,7 +100,7 @@ class MeetingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat formatter = DateFormat('dd-MM-yyyy hh:mm a');
+    final DateFormat formatter = DateFormat('dd MMMM yyyy, hh:mm a');
     return GestureDetector(
       onTap: () => onTap(meeting),
       child: Card(
