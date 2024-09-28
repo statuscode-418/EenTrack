@@ -106,7 +106,7 @@ class _UploadMeetingDetailsScreenState
         ),
         actions: [
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).pop();
               _uploadParticipants();
             },
@@ -130,13 +130,18 @@ class _UploadMeetingDetailsScreenState
 
     for (var row in excelData) {
       final String name = row[nameIndex]?.value.toString() ?? '';
-      final String userId = userIdIndex != -1
-          ? row[userIdIndex]?.value.toString() ?? ''
-          : const Uuid().v4();
+
+      var userId = '';
+      if (userIdIndex != -1 && row[userIdIndex] != null) {
+        userId = row[userIdIndex].value.toString();
+      }
+      if (userId.isEmpty) {
+        userId = const Uuid().v4();
+      }
 
       final Map<String, dynamic> data = {};
 
-      for (int j = 0; j < row.length; j++) {
+      for (int j = 0; j < excelHeaders.length; j++) {
         if (j != nameIndex && j != userIdIndex) {
           data[excelHeaders[j]] = row[j].value.toString();
         }
@@ -151,10 +156,12 @@ class _UploadMeetingDetailsScreenState
         created: time,
         lastUpdated: time,
       );
-      widget.dbProvider.addParticipant(participant);
+      await widget.dbProvider.addParticipant(participant);
     }
 
+    if (!mounted) return;
     showSnackbar(context, 'Patricipants uploaded successfully');
+    Navigator.of(context).pop();
   }
 
   @override

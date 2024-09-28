@@ -11,17 +11,14 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 class ScanningScreenVm extends AppVM with WidgetsBindingObserver {
   final DBModel db;
   final Meeting meeting;
-  final MobileScannerController scannerController = MobileScannerController();
+  late final MobileScannerController scannerController;
   CheckpointModel? _selectedCheckPoint;
 
   bool ready = true;
   ScanningScreenVm(super.context, {required this.db, required this.meeting}) {
+    scannerController = MobileScannerController(autoStart: false);
     WidgetsBinding.instance.addObserver(this);
-
-    // Start listening to the barcode events.
     scannerSubcription = scannerController.barcodes.listen(onDetectBarcode);
-
-    // Finally, start the scanner itself.
     unawaited(scannerController.start());
     init();
   }
@@ -55,8 +52,6 @@ class ScanningScreenVm extends AppVM with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // If the controller is not ready, do not try to start or stop it.
-    // Permission dialogs can trigger lifecycle changes before the controller is ready.
     if (!scannerController.value.isInitialized) {
       return;
     }
@@ -67,14 +62,9 @@ class ScanningScreenVm extends AppVM with WidgetsBindingObserver {
       case AppLifecycleState.paused:
         return;
       case AppLifecycleState.resumed:
-        // Restart the scanner when the app is resumed.
-        // Don't forget to resume listening to the barcode events.
         scannerSubcription = scannerController.barcodes.listen(onDetectBarcode);
-
         unawaited(scannerController.start());
       case AppLifecycleState.inactive:
-        // Stop the scanner when the app is paused.
-        // Also stop the barcode events subscription.
         unawaited(scannerSubcription?.cancel());
         scannerSubcription = null;
         unawaited(scannerController.stop());
@@ -135,7 +125,6 @@ class ScanningScreenVm extends AppVM with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    // Stop listening to the barcode events.
     unawaited(scannerSubcription?.cancel());
     scannerSubcription = null;
     _participantsSubscription?.cancel();
