@@ -55,7 +55,6 @@ dependencies:
   animated_text_kit: ^4.2.2
   random_avatar: ^0.0.8
   flutter_spinkit: ^5.2.0
-  flutter_windowmanager: ^0.2.0
   mobile_scanner: ^6.0.6
   rxdart: ^0.28.0
   file_picker: ^8.0.7
