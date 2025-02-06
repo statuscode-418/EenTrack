@@ -26,16 +26,16 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.eentrack"
-    compileSdkVersion 34 
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 35 
+    ndkVersion "25.1.8937393"
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -49,11 +49,9 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
 
         minSdkVersion 24 
-
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-
         multiDexEnabled true
     }
 
@@ -72,15 +70,14 @@ flutter {
 
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
-
 }
-
-configurations.all {
-    resolutionStrategy {
-        eachDependency {
-            if ((requested.group == "org.jetbrains.kotlin") && (requested.name.startsWith("kotlin-stdlib"))) {
-                useVersion("1.8.0")
-            }
-        }
-    }
-}
+//
+//configurations.all {
+//    resolutionStrategy {
+//        eachDependency {
+//            if ((requested.group == "org.jetbrains.kotlin") && (requested.name.startsWith("kotlin-stdlib"))) {
+//                useVersion("1.8.0")
+//            }
+//        }
+//    }
+//}

@@ -10,12 +10,24 @@ subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 
+//subprojects {
+//    afterEvaluate { project ->
+//        if (project.plugins.hasPlugin("com.android.application") ||
+//                project.plugins.hasPlugin("com.android.library")) {
+//            project.android {
+//                compileSdkVersion 34                
+//            }
+//        }
+//    }
+//}
+//
 subprojects {
-    afterEvaluate { project ->
-        if (project.plugins.hasPlugin("com.android.application") ||
-                project.plugins.hasPlugin("com.android.library")) {
+   afterEvaluate { project ->
+        if (project.hasProperty('android')) {
             project.android {
-                compileSdkVersion 34                
+                if (namespace == null) {
+                    namespace project.group
+                }
             }
         }
     }
